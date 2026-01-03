@@ -1,0 +1,1553 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": []
+    },
+    "kernelspec": {
+      "name": "ir",
+      "display_name": "R"
+    },
+    "language_info": {
+      "name": "R"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "code",
+      "source": [
+        "install.packages(\"tidyverse\")\n",
+        "install.packages(\"ggplot2\")\n",
+        "install.packages(\"readr\")"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "YrhveTLt1Iop",
+        "outputId": "98b4e004-b470-438c-a38e-bced08f9e6d5"
+      },
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "Installing package into ‘/usr/local/lib/R/site-library’\n",
+            "(as ‘lib’ is unspecified)\n",
+            "\n",
+            "Warning message in install.packages(\"tidyverse\"):\n",
+            "“installation of package ‘tidyverse’ had non-zero exit status”\n",
+            "Installing package into ‘/usr/local/lib/R/site-library’\n",
+            "(as ‘lib’ is unspecified)\n",
+            "\n",
+            "Installing package into ‘/usr/local/lib/R/site-library’\n",
+            "(as ‘lib’ is unspecified)\n",
+            "\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 3,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "cDCA0pCT0_hF",
+        "outputId": "96072db1-7bc7-45a6-f8fb-dce887f2301b"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "── \u001b[1mAttaching core tidyverse packages\u001b[22m ──────────────────────── tidyverse 2.0.0 ──\n",
+            "\u001b[32m✔\u001b[39m \u001b[34mdplyr    \u001b[39m 1.1.4     \u001b[32m✔\u001b[39m \u001b[34mreadr    \u001b[39m 2.1.6\n",
+            "\u001b[32m✔\u001b[39m \u001b[34mforcats  \u001b[39m 1.0.1     \u001b[32m✔\u001b[39m \u001b[34mstringr  \u001b[39m 1.6.0\n",
+            "\u001b[32m✔\u001b[39m \u001b[34mggplot2  \u001b[39m 4.0.1     \u001b[32m✔\u001b[39m \u001b[34mtibble   \u001b[39m 3.3.0\n",
+            "\u001b[32m✔\u001b[39m \u001b[34mlubridate\u001b[39m 1.9.4     \u001b[32m✔\u001b[39m \u001b[34mtidyr    \u001b[39m 1.3.1\n",
+            "\u001b[32m✔\u001b[39m \u001b[34mpurrr    \u001b[39m 1.2.0     \n",
+            "── \u001b[1mConflicts\u001b[22m ────────────────────────────────────────── tidyverse_conflicts() ──\n",
+            "\u001b[31m✖\u001b[39m \u001b[34mdplyr\u001b[39m::\u001b[32mfilter()\u001b[39m masks \u001b[34mstats\u001b[39m::filter()\n",
+            "\u001b[31m✖\u001b[39m \u001b[34mdplyr\u001b[39m::\u001b[32mlag()\u001b[39m    masks \u001b[34mstats\u001b[39m::lag()\n",
+            "\u001b[36mℹ\u001b[39m Use the conflicted package (\u001b[3m\u001b[34m<http://conflicted.r-lib.org/>\u001b[39m\u001b[23m) to force all conflicts to become errors\n"
+          ]
+        }
+      ],
+      "source": [
+        "library(tidyverse)\n",
+        "library(ggplot2)\n",
+        "library(readr)"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [],
+      "metadata": {
+        "id": "Nn2J_RUE1dU3"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "data <- read.csv(\"matches.csv\")\n",
+        "head(data)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 583
+        },
+        "id": "gpcgRWK_1EXm",
+        "outputId": "05a8804f-f80d-4414-ddd4-4b46a364b33f"
+      },
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/html": [
+              "<table class=\"dataframe\">\n",
+              "<caption>A data.frame: 6 × 18</caption>\n",
+              "<thead>\n",
+              "\t<tr><th></th><th scope=col>id</th><th scope=col>Season</th><th scope=col>city</th><th scope=col>date</th><th scope=col>team1</th><th scope=col>team2</th><th scope=col>toss_winner</th><th scope=col>toss_decision</th><th scope=col>result</th><th scope=col>dl_applied</th><th scope=col>winner</th><th scope=col>win_by_runs</th><th scope=col>win_by_wickets</th><th scope=col>player_of_match</th><th scope=col>venue</th><th scope=col>umpire1</th><th scope=col>umpire2</th><th scope=col>umpire3</th></tr>\n",
+              "\t<tr><th></th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n",
+              "</thead>\n",
+              "<tbody>\n",
+              "\t<tr><th scope=row>1</th><td>1</td><td>IPL-2017</td><td>Hyderabad</td><td>05-04-2017</td><td>Sunrisers Hyderabad        </td><td>Royal Challengers Bangalore</td><td>Royal Challengers Bangalore</td><td>field</td><td>normal</td><td>0</td><td>Sunrisers Hyderabad        </td><td>35</td><td> 0</td><td>Yuvraj Singh</td><td>Rajiv Gandhi International Stadium, Uppal</td><td>AY Dandekar   </td><td>NJ Llong     </td><td></td></tr>\n",
+              "\t<tr><th scope=row>2</th><td>2</td><td>IPL-2017</td><td>Pune     </td><td>06-04-2017</td><td>Mumbai Indians             </td><td>Rising Pune Supergiant     </td><td>Rising Pune Supergiant     </td><td>field</td><td>normal</td><td>0</td><td>Rising Pune Supergiant     </td><td> 0</td><td> 7</td><td>SPD Smith   </td><td>Maharashtra Cricket Association Stadium  </td><td>A Nand Kishore</td><td>S Ravi       </td><td></td></tr>\n",
+              "\t<tr><th scope=row>3</th><td>3</td><td>IPL-2017</td><td>Rajkot   </td><td>07-04-2017</td><td>Gujarat Lions              </td><td>Kolkata Knight Riders      </td><td>Kolkata Knight Riders      </td><td>field</td><td>normal</td><td>0</td><td>Kolkata Knight Riders      </td><td> 0</td><td>10</td><td>CA Lynn     </td><td>Saurashtra Cricket Association Stadium   </td><td>Nitin Menon   </td><td>CK Nandan    </td><td></td></tr>\n",
+              "\t<tr><th scope=row>4</th><td>4</td><td>IPL-2017</td><td>Indore   </td><td>08-04-2017</td><td>Rising Pune Supergiant     </td><td>Kings XI Punjab            </td><td>Kings XI Punjab            </td><td>field</td><td>normal</td><td>0</td><td>Kings XI Punjab            </td><td> 0</td><td> 6</td><td>GJ Maxwell  </td><td>Holkar Cricket Stadium                   </td><td>AK Chaudhary  </td><td>C Shamshuddin</td><td></td></tr>\n",
+              "\t<tr><th scope=row>5</th><td>5</td><td>IPL-2017</td><td>Bangalore</td><td>08-04-2017</td><td>Royal Challengers Bangalore</td><td>Delhi Daredevils           </td><td>Royal Challengers Bangalore</td><td>bat  </td><td>normal</td><td>0</td><td>Royal Challengers Bangalore</td><td>15</td><td> 0</td><td>KM Jadhav   </td><td>M Chinnaswamy Stadium                    </td><td>              </td><td>             </td><td></td></tr>\n",
+              "\t<tr><th scope=row>6</th><td>6</td><td>IPL-2017</td><td>Hyderabad</td><td>09-04-2017</td><td>Gujarat Lions              </td><td>Sunrisers Hyderabad        </td><td>Sunrisers Hyderabad        </td><td>field</td><td>normal</td><td>0</td><td>Sunrisers Hyderabad        </td><td> 0</td><td> 9</td><td>Rashid Khan </td><td>Rajiv Gandhi International Stadium, Uppal</td><td>A Deshmukh    </td><td>NJ Llong     </td><td></td></tr>\n",
+              "</tbody>\n",
+              "</table>\n"
+            ],
+            "text/markdown": "\nA data.frame: 6 × 18\n\n| <!--/--> | id &lt;int&gt; | Season &lt;chr&gt; | city &lt;chr&gt; | date &lt;chr&gt; | team1 &lt;chr&gt; | team2 &lt;chr&gt; | toss_winner &lt;chr&gt; | toss_decision &lt;chr&gt; | result &lt;chr&gt; | dl_applied &lt;int&gt; | winner &lt;chr&gt; | win_by_runs &lt;int&gt; | win_by_wickets &lt;int&gt; | player_of_match &lt;chr&gt; | venue &lt;chr&gt; | umpire1 &lt;chr&gt; | umpire2 &lt;chr&gt; | umpire3 &lt;chr&gt; |\n|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|\n| 1 | 1 | IPL-2017 | Hyderabad | 05-04-2017 | Sunrisers Hyderabad         | Royal Challengers Bangalore | Royal Challengers Bangalore | field | normal | 0 | Sunrisers Hyderabad         | 35 |  0 | Yuvraj Singh | Rajiv Gandhi International Stadium, Uppal | AY Dandekar    | NJ Llong      | <!----> |\n| 2 | 2 | IPL-2017 | Pune      | 06-04-2017 | Mumbai Indians              | Rising Pune Supergiant      | Rising Pune Supergiant      | field | normal | 0 | Rising Pune Supergiant      |  0 |  7 | SPD Smith    | Maharashtra Cricket Association Stadium   | A Nand Kishore | S Ravi        | <!----> |\n| 3 | 3 | IPL-2017 | Rajkot    | 07-04-2017 | Gujarat Lions               | Kolkata Knight Riders       | Kolkata Knight Riders       | field | normal | 0 | Kolkata Knight Riders       |  0 | 10 | CA Lynn      | Saurashtra Cricket Association Stadium    | Nitin Menon    | CK Nandan     | <!----> |\n| 4 | 4 | IPL-2017 | Indore    | 08-04-2017 | Rising Pune Supergiant      | Kings XI Punjab             | Kings XI Punjab             | field | normal | 0 | Kings XI Punjab             |  0 |  6 | GJ Maxwell   | Holkar Cricket Stadium                    | AK Chaudhary   | C Shamshuddin | <!----> |\n| 5 | 5 | IPL-2017 | Bangalore | 08-04-2017 | Royal Challengers Bangalore | Delhi Daredevils            | Royal Challengers Bangalore | bat   | normal | 0 | Royal Challengers Bangalore | 15 |  0 | KM Jadhav    | M Chinnaswamy Stadium                     | <!----> | <!----> | <!----> |\n| 6 | 6 | IPL-2017 | Hyderabad | 09-04-2017 | Gujarat Lions               | Sunrisers Hyderabad         | Sunrisers Hyderabad         | field | normal | 0 | Sunrisers Hyderabad         |  0 |  9 | Rashid Khan  | Rajiv Gandhi International Stadium, Uppal | A Deshmukh     | NJ Llong      | <!----> |\n\n",
+            "text/latex": "A data.frame: 6 × 18\n\\begin{tabular}{r|llllllllllllllllll}\n  & id & Season & city & date & team1 & team2 & toss\\_winner & toss\\_decision & result & dl\\_applied & winner & win\\_by\\_runs & win\\_by\\_wickets & player\\_of\\_match & venue & umpire1 & umpire2 & umpire3\\\\\n  & <int> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <chr> & <int> & <chr> & <int> & <int> & <chr> & <chr> & <chr> & <chr> & <chr>\\\\\n\\hline\n\t1 & 1 & IPL-2017 & Hyderabad & 05-04-2017 & Sunrisers Hyderabad         & Royal Challengers Bangalore & Royal Challengers Bangalore & field & normal & 0 & Sunrisers Hyderabad         & 35 &  0 & Yuvraj Singh & Rajiv Gandhi International Stadium, Uppal & AY Dandekar    & NJ Llong      & \\\\\n\t2 & 2 & IPL-2017 & Pune      & 06-04-2017 & Mumbai Indians              & Rising Pune Supergiant      & Rising Pune Supergiant      & field & normal & 0 & Rising Pune Supergiant      &  0 &  7 & SPD Smith    & Maharashtra Cricket Association Stadium   & A Nand Kishore & S Ravi        & \\\\\n\t3 & 3 & IPL-2017 & Rajkot    & 07-04-2017 & Gujarat Lions               & Kolkata Knight Riders       & Kolkata Knight Riders       & field & normal & 0 & Kolkata Knight Riders       &  0 & 10 & CA Lynn      & Saurashtra Cricket Association Stadium    & Nitin Menon    & CK Nandan     & \\\\\n\t4 & 4 & IPL-2017 & Indore    & 08-04-2017 & Rising Pune Supergiant      & Kings XI Punjab             & Kings XI Punjab             & field & normal & 0 & Kings XI Punjab             &  0 &  6 & GJ Maxwell   & Holkar Cricket Stadium                    & AK Chaudhary   & C Shamshuddin & \\\\\n\t5 & 5 & IPL-2017 & Bangalore & 08-04-2017 & Royal Challengers Bangalore & Delhi Daredevils            & Royal Challengers Bangalore & bat   & normal & 0 & Royal Challengers Bangalore & 15 &  0 & KM Jadhav    & M Chinnaswamy Stadium                     &                &               & \\\\\n\t6 & 6 & IPL-2017 & Hyderabad & 09-04-2017 & Gujarat Lions               & Sunrisers Hyderabad         & Sunrisers Hyderabad         & field & normal & 0 & Sunrisers Hyderabad         &  0 &  9 & Rashid Khan  & Rajiv Gandhi International Stadium, Uppal & A Deshmukh     & NJ Llong      & \\\\\n\\end{tabular}\n",
+            "text/plain": [
+              "  id Season   city      date       team1                      \n",
+              "1 1  IPL-2017 Hyderabad 05-04-2017 Sunrisers Hyderabad        \n",
+              "2 2  IPL-2017 Pune      06-04-2017 Mumbai Indians             \n",
+              "3 3  IPL-2017 Rajkot    07-04-2017 Gujarat Lions              \n",
+              "4 4  IPL-2017 Indore    08-04-2017 Rising Pune Supergiant     \n",
+              "5 5  IPL-2017 Bangalore 08-04-2017 Royal Challengers Bangalore\n",
+              "6 6  IPL-2017 Hyderabad 09-04-2017 Gujarat Lions              \n",
+              "  team2                       toss_winner                 toss_decision result\n",
+              "1 Royal Challengers Bangalore Royal Challengers Bangalore field         normal\n",
+              "2 Rising Pune Supergiant      Rising Pune Supergiant      field         normal\n",
+              "3 Kolkata Knight Riders       Kolkata Knight Riders       field         normal\n",
+              "4 Kings XI Punjab             Kings XI Punjab             field         normal\n",
+              "5 Delhi Daredevils            Royal Challengers Bangalore bat           normal\n",
+              "6 Sunrisers Hyderabad         Sunrisers Hyderabad         field         normal\n",
+              "  dl_applied winner                      win_by_runs win_by_wickets\n",
+              "1 0          Sunrisers Hyderabad         35           0            \n",
+              "2 0          Rising Pune Supergiant       0           7            \n",
+              "3 0          Kolkata Knight Riders        0          10            \n",
+              "4 0          Kings XI Punjab              0           6            \n",
+              "5 0          Royal Challengers Bangalore 15           0            \n",
+              "6 0          Sunrisers Hyderabad          0           9            \n",
+              "  player_of_match venue                                     umpire1       \n",
+              "1 Yuvraj Singh    Rajiv Gandhi International Stadium, Uppal AY Dandekar   \n",
+              "2 SPD Smith       Maharashtra Cricket Association Stadium   A Nand Kishore\n",
+              "3 CA Lynn         Saurashtra Cricket Association Stadium    Nitin Menon   \n",
+              "4 GJ Maxwell      Holkar Cricket Stadium                    AK Chaudhary  \n",
+              "5 KM Jadhav       M Chinnaswamy Stadium                                   \n",
+              "6 Rashid Khan     Rajiv Gandhi International Stadium, Uppal A Deshmukh    \n",
+              "  umpire2       umpire3\n",
+              "1 NJ Llong             \n",
+              "2 S Ravi               \n",
+              "3 CK Nandan            \n",
+              "4 C Shamshuddin        \n",
+              "5                      \n",
+              "6 NJ Llong             "
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "str(data)\n",
+        "summary(data)\n",
+        "colnames(data)\n",
+        "dim(data)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 1000
+        },
+        "id": "B8qSC64_2exW",
+        "outputId": "46321f5e-e9fd-4d68-cda2-63c3770dafd9"
+      },
+      "execution_count": 5,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "'data.frame':\t756 obs. of  18 variables:\n",
+            " $ id             : int  1 2 3 4 5 6 7 8 9 10 ...\n",
+            " $ Season         : chr  \"IPL-2017\" \"IPL-2017\" \"IPL-2017\" \"IPL-2017\" ...\n",
+            " $ city           : chr  \"Hyderabad\" \"Pune\" \"Rajkot\" \"Indore\" ...\n",
+            " $ date           : chr  \"05-04-2017\" \"06-04-2017\" \"07-04-2017\" \"08-04-2017\" ...\n",
+            " $ team1          : chr  \"Sunrisers Hyderabad\" \"Mumbai Indians\" \"Gujarat Lions\" \"Rising Pune Supergiant\" ...\n",
+            " $ team2          : chr  \"Royal Challengers Bangalore\" \"Rising Pune Supergiant\" \"Kolkata Knight Riders\" \"Kings XI Punjab\" ...\n",
+            " $ toss_winner    : chr  \"Royal Challengers Bangalore\" \"Rising Pune Supergiant\" \"Kolkata Knight Riders\" \"Kings XI Punjab\" ...\n",
+            " $ toss_decision  : chr  \"field\" \"field\" \"field\" \"field\" ...\n",
+            " $ result         : chr  \"normal\" \"normal\" \"normal\" \"normal\" ...\n",
+            " $ dl_applied     : int  0 0 0 0 0 0 0 0 0 0 ...\n",
+            " $ winner         : chr  \"Sunrisers Hyderabad\" \"Rising Pune Supergiant\" \"Kolkata Knight Riders\" \"Kings XI Punjab\" ...\n",
+            " $ win_by_runs    : int  35 0 0 0 15 0 0 0 97 0 ...\n",
+            " $ win_by_wickets : int  0 7 10 6 0 9 4 8 0 4 ...\n",
+            " $ player_of_match: chr  \"Yuvraj Singh\" \"SPD Smith\" \"CA Lynn\" \"GJ Maxwell\" ...\n",
+            " $ venue          : chr  \"Rajiv Gandhi International Stadium, Uppal\" \"Maharashtra Cricket Association Stadium\" \"Saurashtra Cricket Association Stadium\" \"Holkar Cricket Stadium\" ...\n",
+            " $ umpire1        : chr  \"AY Dandekar\" \"A Nand Kishore\" \"Nitin Menon\" \"AK Chaudhary\" ...\n",
+            " $ umpire2        : chr  \"NJ Llong\" \"S Ravi\" \"CK Nandan\" \"C Shamshuddin\" ...\n",
+            " $ umpire3        : chr  \"\" \"\" \"\" \"\" ...\n"
+          ]
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "       id             Season              city               date          \n",
+              " Min.   :    1.0   Length:756         Length:756         Length:756        \n",
+              " 1st Qu.:  189.8   Class :character   Class :character   Class :character  \n",
+              " Median :  378.5   Mode  :character   Mode  :character   Mode  :character  \n",
+              " Mean   : 1792.2                                                           \n",
+              " 3rd Qu.:  567.2                                                           \n",
+              " Max.   :11415.0                                                           \n",
+              "    team1              team2           toss_winner        toss_decision     \n",
+              " Length:756         Length:756         Length:756         Length:756        \n",
+              " Class :character   Class :character   Class :character   Class :character  \n",
+              " Mode  :character   Mode  :character   Mode  :character   Mode  :character  \n",
+              "                                                                            \n",
+              "                                                                            \n",
+              "                                                                            \n",
+              "    result            dl_applied         winner           win_by_runs    \n",
+              " Length:756         Min.   :0.00000   Length:756         Min.   :  0.00  \n",
+              " Class :character   1st Qu.:0.00000   Class :character   1st Qu.:  0.00  \n",
+              " Mode  :character   Median :0.00000   Mode  :character   Median :  0.00  \n",
+              "                    Mean   :0.02513                      Mean   : 13.28  \n",
+              "                    3rd Qu.:0.00000                      3rd Qu.: 19.00  \n",
+              "                    Max.   :1.00000                      Max.   :146.00  \n",
+              " win_by_wickets   player_of_match       venue             umpire1         \n",
+              " Min.   : 0.000   Length:756         Length:756         Length:756        \n",
+              " 1st Qu.: 0.000   Class :character   Class :character   Class :character  \n",
+              " Median : 4.000   Mode  :character   Mode  :character   Mode  :character  \n",
+              " Mean   : 3.351                                                           \n",
+              " 3rd Qu.: 6.000                                                           \n",
+              " Max.   :10.000                                                           \n",
+              "   umpire2            umpire3         \n",
+              " Length:756         Length:756        \n",
+              " Class :character   Class :character  \n",
+              " Mode  :character   Mode  :character  \n",
+              "                                      \n",
+              "                                      \n",
+              "                                      "
+            ]
+          },
+          "metadata": {}
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/html": [
+              "<style>\n",
+              ".list-inline {list-style: none; margin:0; padding: 0}\n",
+              ".list-inline>li {display: inline-block}\n",
+              ".list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n",
+              "</style>\n",
+              "<ol class=list-inline><li>'id'</li><li>'Season'</li><li>'city'</li><li>'date'</li><li>'team1'</li><li>'team2'</li><li>'toss_winner'</li><li>'toss_decision'</li><li>'result'</li><li>'dl_applied'</li><li>'winner'</li><li>'win_by_runs'</li><li>'win_by_wickets'</li><li>'player_of_match'</li><li>'venue'</li><li>'umpire1'</li><li>'umpire2'</li><li>'umpire3'</li></ol>\n"
+            ],
+            "text/markdown": "1. 'id'\n2. 'Season'\n3. 'city'\n4. 'date'\n5. 'team1'\n6. 'team2'\n7. 'toss_winner'\n8. 'toss_decision'\n9. 'result'\n10. 'dl_applied'\n11. 'winner'\n12. 'win_by_runs'\n13. 'win_by_wickets'\n14. 'player_of_match'\n15. 'venue'\n16. 'umpire1'\n17. 'umpire2'\n18. 'umpire3'\n\n\n",
+            "text/latex": "\\begin{enumerate*}\n\\item 'id'\n\\item 'Season'\n\\item 'city'\n\\item 'date'\n\\item 'team1'\n\\item 'team2'\n\\item 'toss\\_winner'\n\\item 'toss\\_decision'\n\\item 'result'\n\\item 'dl\\_applied'\n\\item 'winner'\n\\item 'win\\_by\\_runs'\n\\item 'win\\_by\\_wickets'\n\\item 'player\\_of\\_match'\n\\item 'venue'\n\\item 'umpire1'\n\\item 'umpire2'\n\\item 'umpire3'\n\\end{enumerate*}\n",
+            "text/plain": [
+              " [1] \"id\"              \"Season\"          \"city\"            \"date\"           \n",
+              " [5] \"team1\"           \"team2\"           \"toss_winner\"     \"toss_decision\"  \n",
+              " [9] \"result\"          \"dl_applied\"      \"winner\"          \"win_by_runs\"    \n",
+              "[13] \"win_by_wickets\"  \"player_of_match\" \"venue\"           \"umpire1\"        \n",
+              "[17] \"umpire2\"         \"umpire3\"        "
+            ]
+          },
+          "metadata": {}
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/html": [
+              "<style>\n",
+              ".list-inline {list-style: none; margin:0; padding: 0}\n",
+              ".list-inline>li {display: inline-block}\n",
+              ".list-inline>li:not(:last-child)::after {content: \"\\00b7\"; padding: 0 .5ex}\n",
+              "</style>\n",
+              "<ol class=list-inline><li>756</li><li>18</li></ol>\n"
+            ],
+            "text/markdown": "1. 756\n2. 18\n\n\n",
+            "text/latex": "\\begin{enumerate*}\n\\item 756\n\\item 18\n\\end{enumerate*}\n",
+            "text/plain": [
+              "[1] 756  18"
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "colSums(is.na(data))"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 69
+        },
+        "id": "QIqc3gH-6LV5",
+        "outputId": "2411e89b-4bdb-4f7d-e223-f19f50804506"
+      },
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/html": [
+              "<style>\n",
+              ".dl-inline {width: auto; margin:0; padding: 0}\n",
+              ".dl-inline>dt, .dl-inline>dd {float: none; width: auto; display: inline-block}\n",
+              ".dl-inline>dt::after {content: \":\\0020\"; padding-right: .5ex}\n",
+              ".dl-inline>dt:not(:first-of-type) {padding-left: .5ex}\n",
+              "</style><dl class=dl-inline><dt>id</dt><dd>0</dd><dt>Season</dt><dd>0</dd><dt>city</dt><dd>0</dd><dt>date</dt><dd>0</dd><dt>team1</dt><dd>0</dd><dt>team2</dt><dd>0</dd><dt>toss_winner</dt><dd>0</dd><dt>toss_decision</dt><dd>0</dd><dt>result</dt><dd>0</dd><dt>dl_applied</dt><dd>0</dd><dt>winner</dt><dd>0</dd><dt>win_by_runs</dt><dd>0</dd><dt>win_by_wickets</dt><dd>0</dd><dt>player_of_match</dt><dd>0</dd><dt>venue</dt><dd>0</dd><dt>umpire1</dt><dd>0</dd><dt>umpire2</dt><dd>0</dd><dt>umpire3</dt><dd>0</dd></dl>\n"
+            ],
+            "text/markdown": "id\n:   0Season\n:   0city\n:   0date\n:   0team1\n:   0team2\n:   0toss_winner\n:   0toss_decision\n:   0result\n:   0dl_applied\n:   0winner\n:   0win_by_runs\n:   0win_by_wickets\n:   0player_of_match\n:   0venue\n:   0umpire1\n:   0umpire2\n:   0umpire3\n:   0\n\n",
+            "text/latex": "\\begin{description*}\n\\item[id] 0\n\\item[Season] 0\n\\item[city] 0\n\\item[date] 0\n\\item[team1] 0\n\\item[team2] 0\n\\item[toss\\textbackslash{}\\_winner] 0\n\\item[toss\\textbackslash{}\\_decision] 0\n\\item[result] 0\n\\item[dl\\textbackslash{}\\_applied] 0\n\\item[winner] 0\n\\item[win\\textbackslash{}\\_by\\textbackslash{}\\_runs] 0\n\\item[win\\textbackslash{}\\_by\\textbackslash{}\\_wickets] 0\n\\item[player\\textbackslash{}\\_of\\textbackslash{}\\_match] 0\n\\item[venue] 0\n\\item[umpire1] 0\n\\item[umpire2] 0\n\\item[umpire3] 0\n\\end{description*}\n",
+            "text/plain": [
+              "             id          Season            city            date           team1 \n",
+              "              0               0               0               0               0 \n",
+              "          team2     toss_winner   toss_decision          result      dl_applied \n",
+              "              0               0               0               0               0 \n",
+              "         winner     win_by_runs  win_by_wickets player_of_match           venue \n",
+              "              0               0               0               0               0 \n",
+              "        umpire1         umpire2         umpire3 \n",
+              "              0               0               0 "
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "library(dplyr)\n",
+        "\n",
+        "season_dist <- data %>%\n",
+        "  group_by(Season) %>%\n",
+        "    summarise(total_matches = n())\n",
+        "\n",
+        "    season_dist"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 474
+        },
+        "id": "S4mJLR4q6PS4",
+        "outputId": "18ebc8a6-7ff5-4a80-d3cc-71bc0b28d121"
+      },
+      "execution_count": 8,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/html": [
+              "<table class=\"dataframe\">\n",
+              "<caption>A tibble: 12 × 2</caption>\n",
+              "<thead>\n",
+              "\t<tr><th scope=col>Season</th><th scope=col>total_matches</th></tr>\n",
+              "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th></tr>\n",
+              "</thead>\n",
+              "<tbody>\n",
+              "\t<tr><td>IPL-2008</td><td>58</td></tr>\n",
+              "\t<tr><td>IPL-2009</td><td>57</td></tr>\n",
+              "\t<tr><td>IPL-2010</td><td>60</td></tr>\n",
+              "\t<tr><td>IPL-2011</td><td>73</td></tr>\n",
+              "\t<tr><td>IPL-2012</td><td>74</td></tr>\n",
+              "\t<tr><td>IPL-2013</td><td>76</td></tr>\n",
+              "\t<tr><td>IPL-2014</td><td>60</td></tr>\n",
+              "\t<tr><td>IPL-2015</td><td>59</td></tr>\n",
+              "\t<tr><td>IPL-2016</td><td>60</td></tr>\n",
+              "\t<tr><td>IPL-2017</td><td>59</td></tr>\n",
+              "\t<tr><td>IPL-2018</td><td>60</td></tr>\n",
+              "\t<tr><td>IPL-2019</td><td>60</td></tr>\n",
+              "</tbody>\n",
+              "</table>\n"
+            ],
+            "text/markdown": "\nA tibble: 12 × 2\n\n| Season &lt;chr&gt; | total_matches &lt;int&gt; |\n|---|---|\n| IPL-2008 | 58 |\n| IPL-2009 | 57 |\n| IPL-2010 | 60 |\n| IPL-2011 | 73 |\n| IPL-2012 | 74 |\n| IPL-2013 | 76 |\n| IPL-2014 | 60 |\n| IPL-2015 | 59 |\n| IPL-2016 | 60 |\n| IPL-2017 | 59 |\n| IPL-2018 | 60 |\n| IPL-2019 | 60 |\n\n",
+            "text/latex": "A tibble: 12 × 2\n\\begin{tabular}{ll}\n Season & total\\_matches\\\\\n <chr> & <int>\\\\\n\\hline\n\t IPL-2008 & 58\\\\\n\t IPL-2009 & 57\\\\\n\t IPL-2010 & 60\\\\\n\t IPL-2011 & 73\\\\\n\t IPL-2012 & 74\\\\\n\t IPL-2013 & 76\\\\\n\t IPL-2014 & 60\\\\\n\t IPL-2015 & 59\\\\\n\t IPL-2016 & 60\\\\\n\t IPL-2017 & 59\\\\\n\t IPL-2018 & 60\\\\\n\t IPL-2019 & 60\\\\\n\\end{tabular}\n",
+            "text/plain": [
+              "   Season   total_matches\n",
+              "1  IPL-2008 58           \n",
+              "2  IPL-2009 57           \n",
+              "3  IPL-2010 60           \n",
+              "4  IPL-2011 73           \n",
+              "5  IPL-2012 74           \n",
+              "6  IPL-2013 76           \n",
+              "7  IPL-2014 60           \n",
+              "8  IPL-2015 59           \n",
+              "9  IPL-2016 60           \n",
+              "10 IPL-2017 59           \n",
+              "11 IPL-2018 60           \n",
+              "12 IPL-2019 60           "
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "library(ggplot2)\n",
+        "\n",
+        "ggplot(season_dist, aes(x = Season, y = total_matches)) +\n",
+        "  geom_col() +\n",
+        "    theme_minimal() +\n",
+        "      labs(\n",
+        "          title = \"Season-wise Match Distribution\",\n",
+        "              x = \"Season\",\n",
+        "                  y = \"Total Matches\"\n",
+        "                    )"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 437
+        },
+        "id": "mqKdZDRG6T5Y",
+        "outputId": "4fde2e1c-73b2-4901-9731-4df9bb84259f"
+      },
+      "execution_count": 9,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "plot without title"
+            ],
+            "image/png": "iVBORw0KGgoAAAANSUhEUgAAA0gAAANICAMAAADKOT/pAAAC/VBMVEUAAAABAQECAgIDAwME\nBAQFBQUGBgYHBwcICAgJCQkKCgoLCwsMDAwNDQ0ODg4PDw8QEBARERESEhITExMUFBQVFRUW\nFhYXFxcYGBgZGRkaGhobGxscHBwdHR0eHh4fHx8gICAhISEiIiIjIyMkJCQlJSUmJiYnJyco\nKCgpKSkqKiorKyssLCwtLS0uLi4vLy8wMDAxMTEyMjIzMzM0NDQ1NTU2NjY3Nzc4ODg5OTk6\nOjo7Ozs8PDw9PT0+Pj4/Pz9AQEBBQUFCQkJDQ0NERERFRUVGRkZHR0dISEhJSUlKSkpLS0tM\nTExNTU1OTk5PT09QUFBRUVFSUlJTU1NUVFRVVVVWVlZXV1dYWFhZWVlaWlpbW1tcXFxdXV1e\nXl5fX19gYGBhYWFiYmJjY2NkZGRlZWVmZmZnZ2doaGhpaWlqampra2tsbGxtbW1ubm5vb29w\ncHBxcXFycnJzc3N0dHR1dXV2dnZ3d3d4eHh5eXl6enp7e3t8fHx9fX1+fn5/f3+AgICBgYGC\ngoKDg4OEhISFhYWGhoaHh4eIiIiJiYmKioqLi4uMjIyNjY2Ojo6Pj4+QkJCRkZGSkpKTk5OV\nlZWWlpaXl5eYmJiZmZmampqbm5ucnJydnZ2enp6fn5+goKChoaGioqKjo6OkpKSlpaWmpqan\np6eoqKipqamqqqqrq6usrKytra2urq6vr6+wsLCxsbGysrKzs7O0tLS1tbW2tra3t7e4uLi5\nubm6urq7u7u8vLy9vb2+vr6/v7/AwMDBwcHCwsLDw8PExMTFxcXGxsbHx8fIyMjJycnKysrL\ny8vMzMzNzc3Ozs7Pz8/Q0NDR0dHS0tLT09PU1NTV1dXW1tbX19fY2NjZ2dna2trb29vc3Nzd\n3d3e3t7f39/g4ODh4eHi4uLj4+Pk5OTl5eXm5ubn5+fo6Ojp6enq6urr6+vs7Ozt7e3u7u7v\n7+/w8PDx8fHy8vLz8/P09PT19fX29vb39/f4+Pj5+fn6+vr7+/v8/Pz9/f3+/v7///8G5K/k\nAAAACXBIWXMAABJ0AAASdAHeZh94AAAgAElEQVR4nO2dCXhV1bm/F/MYrVUccODfalusOA9F\nqSMW9faGoSgaAgFRlAJeFRxwqEKxYEXEOtTidLUotXidwIoI2lKvWOgV6ngRoVxFFA8JGQgh\nZFjPf+99cpIVcvbZ2Xvt0y/n+37v85SThLPy7pP+XnISEJQGAFijqC8AAA4gJABiACEBEAMI\nCYAYQEgAxABCAiAGEBIAMdCGQ7pZ/TbedzhbzbFRej95m3ow6nnAGZuQPvj5CQd17HnMhI9j\nu5pm3N1nQcA91io1JPXyYqVu2+unn365+estQ3LegUOP7wx/sjK90nwX3k/6huTdM/iSAVMs\nQlrQSR0/duLFvVWXP8V3PaFYq9p13Nbw8sXtWoR08BXNX08XUs9LL730p0e3U4cuS2vY+134\nh9TinkAU0UMq7dHhefe2boY6oia26wnFWnWCmpt8saRLv71D2qhaEdKR3u3m8arT62kELd6F\nb0gt7wlEET2kt1T/hpfGTNnq/Fj/aP+eXfvevtN9S9m0vl07H3VDmfvyonP363TIhd4nrT33\nn9Kzy5GTvnRevF29/OHQXl2Of7bx/fXuWu38uFqpLc7NN+1OafiCwzhuGjzWqit69Uu++LC6\n3gupyTzcfdY2wAn9oVN69DzvL9oN6b6Pfvqtrsf/wXgHRza8dI86bJfeW9nwLm5VLz/Ue9/U\n10gPvXlWXo8Bbzj3m6SedI+uUj9N3TN5PuPDBDyJHtJ76vt15uuj1CFTb+2vTih3lnSmOvmG\na3+gTq3Ver7qdfUvxn273dPOpC9Sfa/9xUXqkM1a/1JN33fQ9T9VakXq/Bj1V+fHX3dWzzg3\nf3Sq8FZpHDcNSdaqcRPUGu/F0w5yj5jmJWNV/3l/dJ7zqR9OLOypnnZDmvqtQVMHq3bLm95B\nKqT6E9x77KVseBfT1ZTuBeNTIY3vcuGUIe06/rlZSA339O6S+WECnkQPqaavGvRe06vPqZOd\ngddPVtO0/i/V30mouq96Retj1WfOz36R199d6Om7tfur9Ah31J1/77x8gxqTegcL1K+cHy84\nvc9Vzs1EtTK5SuO4aUiyVo1ZrSa6L32ipixyQzLNi7xnWwvVRc5b/rd7j4qU8yZV1PQOUiHp\nu9Uo3UKZfBez1L7u876GkNq731WY436uM0JquGdDiJkeJuCJxTcbPvmhUn0KH3o/+dr5yvty\nfUenQ7T+5wvep4mb1V1aH97uK/dl92nbAOU9Qyvr3HmXs7AB7st/U6en3t3X7S5wPqP0mDL8\nB84rR+fVJFdpHDcNSZyQ9LH7uaudpj70QjLNyW0P8j7R6XlTNzrOs9wXV6mzm95BY0ivuD+5\ntzL5LmYnn8Q2hOS9XNW1XbFfSJkfJuCJzbe/a58bcbDzpcHhd7lT7qmSX7ucqP7Puy3/6qsZ\n7rQnqr6Pe8PU9V1VqffCsc7TMedplvvip+qExnd3fF6tfls9/xv1td6mhjassul4C0MypPvV\nQufZ1GGn6UWpbzakzMlt91C7UoLZ6ib3Zn2T0wjpTXViS2UqpOvdVxpCusH7mRPUOz4hBT1M\nwBLb35Dd+PSIHuq0ar1LNfKO1i8O6Oq96H7VcnUnpX540yZn4Kpz8sx56rXUd9A2qON17dku\nK5znP2v0zHaJ99RzzrO43zYMt+l4c4OHG9L2LoO0ft25azIkw+xte6fq2nithrPxHTSGtEgN\nbKFsDGmWe4+GkOY2PIZXfULye5iANTH8yYav+znzqVLt7mxgk/6dyrvu2Vdfuzr5OWLrI0Py\nVOfndIXqlDxwjlpqLqzGW/5Cp4a5+tx+um6fiXqC2tj4xwRSx5sZkrgh6RHtP9cju5UmQzLN\n3rZ3qQ71qQvNGNKNalILZWNI3rmGkO737j7QqSR9SH4PE7DGIqTtqYU+rMZpva/6pvFnDlXu\nd5v1HY2/s1P1247f2q27qx3ea8eo/0m3sKquQ3Z3naz1hcfovt/T5p+3SR43DUm8kF5Xvyrv\nVqiTIZnm5LbzVCJ190whVR/qfIppoUwX0u3ez5+g/qYnqyfcF1/Y62ukgIcJWBI9pDNU6g80\nTHe/czZIeb89q4u13q16ui/Vn+bOefNW781nqY+d/y3x7tGx2+60Czt//xXuO/lVu4+U01Ny\nlcZxw9CAF1LdEac+7X532Q2pmTm57XPdr6G0njXwvzOGdI3qV99SmS6kn7gv7+7Wvsx5Luo9\nzbtlr5CCHibgSPSQ7lK9vO+i1T/fXb3lfnO6n/sJY2XHi7X+tvrcefv0g51nS+vUee63v8oP\n67BdP6XOcF+eqq5M99lB61+rke2cTx8r1Ri1WCdXaR43DUm8kPSd7Qd+p77hM5Jh1ovd71jo\n/1Qn79T6n/t1L8kQ0hcjVff30iiT76J5SO3/23n5QfcrqofV2Y734wPckJL39O4S9DABR6KH\nVFuo1HeGFf7b4aq9+xtAukAdOuXO4Z3y/qb1FPW9u+7q/4PX1f53OxP97qQ7JvZR1zoDH6L6\n3XjrQPX97ekXtlZ1dv+cwu4unTtX6IZVGsdNQ+qAG9Lm9mqGbgjJNH/WrtO4Cbru31WfCaPz\n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\nZAjJAoRkgpAsQEihQEhEISCkzCAkE4SUtfPBjwwhWYCQTBCSBQgpFAiJKASElBmEZIKQsnY+\n+JEhJAsQkglCsgAhhQIhEYWAkDKDkEwQUtbOBz8yhGQBQjJBSBYgpFAgJKIQEFJmEJIJQsra\n+eBHhpAsQEgmCMkChBQKhEQUAkLKDEIyQUhZOx/8yBCSBQjJBCFZgJBCgZCIQkBImUFIJggp\na+eDHxlCsgAhmSAkCxBSKFoR0qtXDpu8WuuKuWNGztgW7r0jpKydD35kCMmCLIS0vGjNtpfG\nV+qZN2/6cs6kcFeHkLJ2PviRISQLshDS+BXeTWLwRuez0tB1od47Qsra+eBHhpAsiD+k7fkr\nrrl46if6neHux2Xyc6HeO0LK2vngR4aQLIg/pPX5t3xRPv+y0qVj3ddum58SbW8Vidbdzfe4\n3fnWHI+8ZMvjtudb8/Ajf+CSx23PC9DvCBOS82yutmD50subhVS3ozU4JhuKE8WB94m+ZMvz\nbUJvfd6fklZ88LOqb8V2LPX2V1/W+pAS+RucHyctejf51G5R0P2b8S94ahf5gxHPcytifRaf\nGrbqqV329K16amepj/PqA0OqK1qsdfWIlcWDnaDKhnwY/OgMEFKW9QjJRh/n1Qd/125R4drE\nA0VVevZ1m7ZMnxLuC0iElGU9QrLRx3n1wSHVPTV62LTPta6cV1Q4K2QYCCnLeoRko4/z6nP+\njwhF/mAgpMwgpFBXj5CIjiOkzCAkE4SUZT1CstHHefUIieg4QsoMQjJBSFnWU09Jtt4EIREd\n5zEl2XoThER0nMeUZOtNEBLRcR5Tkq03QUhEx3lMSbbeBCERHecxJdl6E4REdJzHlGTrTRAS\n0XEeU5KtN0FIRMd5TEm23sQ+pMhXE/y72wgp6Dj1lGTrTRAS0XEeU5KtN0FIRMd5TEm23gQh\nER3nMSXZehOERHScx5Rk600QEtFxHlOSrTdBSETHeUxJtt4EIREd5zEl2XoThER0nMeUZOtN\n6EOiOs5CTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRG\nTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqE\nxEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZ\neoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89\nJdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRG\nTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqE\nxEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZ\neoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89\nJdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRG\nTz0l2XqExEZPPSXZ+jhCqtuRIvLVFFieh57w8qH3KLMOSdemiHw1BZbnoSe8fOg96uxDaiTy\n1bB4bkWsp35yI1tvgpByWk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqE\nxEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZ\neoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89\nJdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRG\nTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqE\nxEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZ\neoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89\nJdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2Xr/kCq3ar3ryXs3IqQc0VNPSbbe\nN6RPDpyta05Rat/3EFJu6KmnJFvvG9LPjv1M/149/NkZFyOk3NBTT0m23jekA5/Relg/rZ85\nHCHlhp56SrL1viF1flPX7neT1ss6I6Tc0FNPSbbeN6TDH9PL1JtaP34IQsoNPfWUZOt9Q7ri\n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\nhvm7T6inJFtPPSXZ+vQhqQfdH79cvebrMBmRT0m2nnpKsvWZQgpP5KthsWRiPfWUZOsREhs9\n9ZRk631CGj6vCYSUG3rqKcnW+4RkgpByQ089Jdl6n5D+460mEFJu6KmnJFvvExK+Rso9PfWU\nZOsREhs99ZRk6xESGz31lGTr04d09VsIKef01FOSrU8fUlQiXw2LJRPrqackW4+Q2OippyRb\nj5DY6KmnJFuPkNjoqackW4+Q2OippyRbj5DY6KmnJFuPkNjoqackW4+Q2OippyRbj5DY6Kmn\nJFuPkNjoqackW4+Q2OippyRbj5DY6KmnJFuPkNjoqackW4+Q2OippyRbj5DY6KmnJFsfR0j1\nu1NEvpoCy/PQE14+9B7V1iHVVaSIfDUFluehJ7x86D0qrUNqIvLVsHhuRaynfnIjW2+CkHJa\nTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqE\nxEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZ\neoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89\nJdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRG\nTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqE\nxEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZ\neoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89\nJdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRG\nTz0l2XqExEZPPSXZev9D0DAAABENSURBVITERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89\nJdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRG\nTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqE\nxEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZeoTERk89Jdl6hMRGTz0l2XqExEZPPSXZ\neoTERk89Jdl6hMRGTz0l2XqExEZPPSXZ+nAhFc8ZNWLaeq0r5o4ZOWMbQmpTeuopydaHC+n6\nmzduvbewSs+8edOXcybVIaS2pKeekmx9qJDKZ32u9Tf5nyYGb3Q+Kw1dh5Dakp56SrL1oULy\n+GRIyTvD650XJj+XelN9ishXU2B5HnrCy4c+SbiQyic+qZeOdV+6bX7Dm2oTKSJfTYHleegJ\nLx96j5JQIX1x1cP1eunlzUKqK00R+WoKLM9DT3j50HuUhwlp3cjFzo/vJp/aLWrx05GvhsUX\nKcR66q8SZOtNgkP6qODv7k3x4A1alw35ECG1JT31lGTrQ4VUPX6h+2SwSs++btOW6VPqW9wh\n8tWwWDKxnnpKsvWhQlqX77FEV84rKpxV0vIOka+GxZKJ9dRTkq0PFVIgka+GxZKJ9dRTkq1H\nSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOS\nrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTU\nU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs\n9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1H\nSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOS\nrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTU\nU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs\n9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1H\nSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOS\nrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTU\nU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs\n9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1HSGz01FOSrUdIbPTUU5KtR0hs9NRTkq1H\nSGz01FOSrUdIbPTUU5KtjyOk2pIUka+mwPI89ISXD71HqXVITUS+GhafEoj11L8my9abIKSc\n1lNPSbYeIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYe\nIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYeIbHRU09J\nth4hsdFTT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFT\nT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFTT0m2HiGx\n0VNPSbYeIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYe\nIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYeIbHRU09J\nth4hsdFTT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFT\nT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFTT0m2HiGx\n0VNPSbYeIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYe\nIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYeIbHRU09J\nth4hsdFTT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFT\nT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFTT0m2HiGx0VNPSbYeIbHRU09Jth4hsdFTT0m2HiGx\n0VNPSbYeIbHRU09Jtj5aSBVzx4ycsQ0htSk99ZRk66OFNPPmTV/OmVSHkNqSnnpKsvWRQkoM\n3uh8Vhq6DiG1JT31lGTrI4X0zvB658fJzyGktqSnnpJsfaSQlo51f7xtfsOrdRUpIl9NgeV5\n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"
+          },
+          "metadata": {
+            "image/png": {
+              "width": 420,
+              "height": 420
+            }
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "toss_decision_dist <- data %>%\n",
+        "  group_by(toss_decision) %>%\n",
+        "    summarise(count = n())\n",
+        "\n",
+        "    toss_decision_dist"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 160
+        },
+        "id": "8qgBBz1-6cok",
+        "outputId": "a46b3439-7c4e-4e46-91e8-acde58d1c3c6"
+      },
+      "execution_count": 10,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/html": [
+              "<table class=\"dataframe\">\n",
+              "<caption>A tibble: 2 × 2</caption>\n",
+              "<thead>\n",
+              "\t<tr><th scope=col>toss_decision</th><th scope=col>count</th></tr>\n",
+              "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th></tr>\n",
+              "</thead>\n",
+              "<tbody>\n",
+              "\t<tr><td>bat  </td><td>293</td></tr>\n",
+              "\t<tr><td>field</td><td>463</td></tr>\n",
+              "</tbody>\n",
+              "</table>\n"
+            ],
+            "text/markdown": "\nA tibble: 2 × 2\n\n| toss_decision &lt;chr&gt; | count &lt;int&gt; |\n|---|---|\n| bat   | 293 |\n| field | 463 |\n\n",
+            "text/latex": "A tibble: 2 × 2\n\\begin{tabular}{ll}\n toss\\_decision & count\\\\\n <chr> & <int>\\\\\n\\hline\n\t bat   & 293\\\\\n\t field & 463\\\\\n\\end{tabular}\n",
+            "text/plain": [
+              "  toss_decision count\n",
+              "1 bat           293  \n",
+              "2 field         463  "
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "ggplot(toss_decision_dist, aes(x = toss_decision, y = count)) +\n",
+        "  geom_col() +\n",
+        "    theme_minimal() +\n",
+        "      labs(\n",
+        "          title = \"Toss Decision Distribution\",\n",
+        "              x = \"Decision\",\n",
+        "                  y = \"Count\"\n",
+        "                    )"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 437
+        },
+        "id": "1HSAOVjS6bwa",
+        "outputId": "6262dc13-4538-4e0a-bb78-93a03880b987"
+      },
+      "execution_count": 11,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "plot without title"
+            ],
+            "image/png": "iVBORw0KGgoAAAANSUhEUgAAA0gAAANICAMAAADKOT/pAAAC7lBMVEUAAAABAQECAgIDAwME\nBAQFBQUGBgYHBwcICAgJCQkKCgoLCwsMDAwNDQ0ODg4PDw8QEBARERESEhITExMUFBQVFRUW\nFhYXFxcYGBgZGRkaGhobGxscHBwdHR0eHh4fHx8hISEiIiIjIyMkJCQmJiYnJycoKCgpKSkq\nKiorKyssLCwtLS0uLi4vLy8wMDAxMTEyMjIzMzM0NDQ1NTU2NjY3Nzc4ODg5OTk6Ojo7Ozs8\nPDw9PT0+Pj4/Pz9AQEBBQUFCQkJDQ0NERERFRUVGRkZHR0dISEhJSUlLS0tMTExNTU1OTk5P\nT09QUFBRUVFSUlJTU1NUVFRVVVVWVlZXV1dYWFhZWVlaWlpbW1tcXFxdXV1eXl5fX19gYGBh\nYWFiYmJjY2NkZGRlZWVmZmZnZ2doaGhpaWlqampra2tsbGxtbW1ubm5vb29wcHBxcXFycnJz\nc3N0dHR1dXV2dnZ3d3d4eHh5eXl6enp7e3t8fHx9fX1+fn5/f3+AgICBgYGCgoKDg4OFhYWG\nhoaHh4eIiIiJiYmKioqLi4uMjIyNjY2Ojo6Pj4+QkJCRkZGSkpKTk5OVlZWWlpaXl5eYmJiZ\nmZmampqbm5ucnJydnZ2enp6fn5+goKChoaGioqKjo6OkpKSlpaWmpqanp6eoqKipqamqqqqr\nq6usrKyurq6vr6+wsLCxsbGysrKzs7O0tLS1tbW2tra3t7e4uLi5ubm6urq7u7u8vLy9vb2+\nvr6/v7/AwMDBwcHCwsLDw8PExMTFxcXGxsbHx8fIyMjJycnKysrLy8vMzMzNzc3Ozs7Pz8/Q\n0NDR0dHS0tLT09PU1NTV1dXW1tbX19fY2NjZ2dna2trb29vc3Nzd3d3e3t7f39/g4ODh4eHi\n4uLj4+Pk5OTl5eXm5ubn5+fo6Ojp6enq6urr6+vs7Ozt7e3u7u7v7+/w8PDx8fHy8vLz8/P0\n9PT19fX29vb39/f4+Pj5+fn6+vr7+/v8/Pz9/f3+/v7///9PBqviAAAACXBIWXMAABJ0AAAS\ndAHeZh94AAAgAElEQVR4nO3de5yddXmu8TeBEMhBditYARXbKlpAULbiAaqkpeqeJDIcAyRE\nhCJhbyGAAaJCpIklZQcrtg2CxVopOx4oAVMQq1hDBDWxpaJAUiqHGIYEkiHnZN7/9jrMmsOP\nJGtl3e/DO8881/fzKWsNmayZ3n2uZnIAshyALCv7EwCGA0ICCkBIQAEICSgAIQEFICSgAIQE\nFGBIhzQr+5s9vt3GS7zyG2dnX2r3+wMNekjXZv0ObPH7LK+999g3d351457e7QuHf32Pb7fw\nyq/4Ll+7K3m93YZUe88WPiRQREh3TKp4d3Zw9WFKi99neTbujDPO+OjbRmSH3Sd/Anv3yq8/\nP/kbuw3pFe8J7FZBX9p9O5uwN+++PPuD2uNTF2Sj/qWYz6DFV16ZtRrSK98T2K2CQ9p203Hj\nRv/BjGerzxd96HdGHfLhe5OnNY1zz/Mbsjdsqjz03HL8uP2P+MzL1b+18+bjxo476Yd54yco\n/d+5/vaAj/GZ7K5HJx88+h3f2O0rJy/RWf3C7/35NdldNx96YOPnSDd//8TxY99/f+X9ZmRf\nrX7Xh7KPNt6zhQ8JFB3Szo9kR3zqsx/JDnkqzxdmB//5Zz/+uyO+NuhpXf+59xyTVf/uOdkh\nl19zfHbMhsrzU7O3X3z2uOrfrl3xgO9ce3vgx/h8dt2BJ1/20Sx7YHevnLzE4vOy4xf8v/y6\nbOaYsy5ohHTB6A/PnDRi3x8MCqn3PVv4kEDRIS3M3rslr/5/7dPz/KjsycrTp8cfP+hpXf+5\n51/IzsnzO7N3VRLquSS7qvJzruwjO/L8V2PGdteveMB37q2i/2PMy/b7h8rzK7Jpu3vl9CUW\n1b5gm5sdWP26rzekkdVfVZhf+eFnYEi979nChwSKDun9We3Lt/X77bcpf+OI1dXnWyv/M+Bp\n3YBz/+fsxDz/k6z2KwMvjjokz0/OflR9vuDylfUrHvCda28P/Bjzqtef5z/J3ru7V05fop7H\nvKzWdG9Iteeb9x+xdnch7flDAgWH1LN/9lLtzaOyR/KLsyNuXV3/1gFP6wac+/ezY/N8XFb7\n2VF+bPbf+dhsU+Pbalc84DtX3x70MeZll1efPp4ds7tXTl+iEdJlfa8/O7ui9i3HZEt3E1KT\nDwkUHNKGbL/6mydl3823/fmoLHv7p1dV3hzwtG7AuS+qfM9N/b8TtfTlbP++d6sd+oDvXH17\n0MeYl82vPn0ie8duXvkVL9EIaW7f68/Obux9vXt2E1KTDwkUHFJ3Nqr+5gezJZW/Pve3k8Zn\n+92ZD35aNeDcr8xm5JuzEdf2WrUp26en8W29f6yg7ztX3x70MfYYUvWVX/ESjZDm973+7Oym\n2rtPqFSy65CafEig6J8jjclerL35R9nP6n9/89/s+z+2vOLpgHPfeljlB4L8wOz5vpcan3U1\nnvb/+Zz6d669PfBj7Cmk+iunL7GrkD5T+/Zjsp/kl2S3VZ9+K/k50p4/JFB0SCdmi6sPa/c9\nYEv+1HN5/W/9cuDTuv5z/9/ZkT3VX2D4Zu2ttZX/+VB2R/Xp3Ak/rl/xgO9ce3vgx9hTSPVX\nTl9iVyH9afX5lgNGrs+vqH+Zd3US0p4/JFB0SLdn76v+0tjl2SfyFdlJ1acb3rDPCwOe9r57\n49yfnpKN+Xle/eXvI6s/JD2476l5/vfZu17O8//6nTHralc88DvXrnrAx9hDSI1XTl/i7mxy\nnoY08seV51+q/m/w5eyPK/H98qBqSPX3bOFDAkWH1DMpO/LKayZkb6kUMyX7/Rmfu/jw7FOD\nntYtz8Z2dnZ2HDMyO+zHtb9xVnbYzGs7R43/SZ7v/F/Z4RedOz67pfeKB3zn2tsDP8auQhr8\nyulLPDli1McvGhTSrOyC10ybc+Y+o5fl+ZrXZO+97Mxx87OPNN6zhQ8JFP5HhLbf9M4xo4+4\nuvpTip03v++gfQ484baeQU/r6n9Ge+TBE77U+0vdO2957/h93zD1sdpr3Hj0AWNP/H7e+JMM\n/d+5/hOeAR9jVyENfuX0JfIvHDT6nYNCujRb9K8njhv7x7XfvfqPk8aMe893urIPNt6zhQ8J\nDPF/HgnwgpCAAhASUABCAgpASEABCAkoACEBBSAkoACEBBSAkIACEBJQAEICCkBIQAEICSgA\nISW2v7S57E9h+Hqpu+zPwAwhJbZ17fE/kAFF14tlfwZmCClBSIYIKQ5CMkRIcRCSIUKKg5AM\nEVIchGSIkOIgJEOEFAchGSKkOAjJECHFQUiGCCkOQjJESHEQkiFCioOQDBFSHIRkiJDiICRD\nhBQHIRkipDgIyRAhxUFIhggpDkIyREhxEJIhQoqDkAwRUhyEZIiQ4iAkQ4QUByEZIqQ4CMkQ\nIcVBSIYIKQ5CMkRIcRCSIUKKg5AMEVIchGSIkOIgJEOEFAchGSKkOAjJECHF4T6ks9AmaXZC\nShBSWNLshJQgpLCk2QkpQUhhSbMTUoKQwpJmJ6QEIYUlzU5ICUIKS5qdkBKEFJY0OyElCCks\naXZCShBSWNLshJQgpLCk2QkpQUhhSbMTUoKQwpJmJ6QEIYUlzU5ICUIKS5qdkBKEFJY0OyEl\n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\nhqSTHhDSii9mk86v+sTnnpZes7myJ3OLbQ1JJz3oS7s/e1x6rdaVPZlbbGtIOml+1c4VtjUk\nnfSgkNZMO3Rk/SdJ0ms2V/ZkbrGtIemkByVz2r4TptV+lnS+9JrNlT2ZW2xrSDrpQSG99jvS\na7Wu7MncYltD0kkPCmnM89Jrta7sydxiW0PSSQ8K6YR/lV6rdWVP5hbbGpJOelBIP333UunF\nWlb2ZG6xrSHppAeF9P43ZmMOr5Fes7myJ3OLbQ1JJz34S7sJDdJrNlf2ZG6xrSHppPkNWVfY\n1pB00oTkCtsakk568O8jNYyXXrO5sidzi20NSSc9KKRJNe8+4MgZ0ms2V/ZkbrGtIemkd/Wl\n3eoTF0uv2VzZk7nFtoakk97lz5EeeZf0ms2VPZlbbGtIOuldhrT6AOk1myt7MrfY1pB00rsK\nqecv3iC9ZnNlT+YW2xqSTnpQSO+oOfKg7ArpNZsrezK32NaQdNK7COnYk764dXfvXpCyJ3OL\nbQ1JJ81vyLrCtoakk05CemHxwq8s2SC9YivKnswttjUknfSgkHZePqr6L2wYe4P0ki0oezK3\n2NaQdNKDQroh+9it9y7+uz/Lbpdes7myJ3OLbQ1JJz0opLfNrD9eyL9pdYhiW0PSSQ8KafQD\n9cd7+A3ZIYptDUknPSiksXfXH78zTnrN5sqezC22NSSd9KCQPvCh2m8gbT75g9JrNlf2ZG6x\nrSHppAeFdM+IN110/ecvOHTk/dJrNlf2ZG6xrSHppAf/PtK3j6j+8vdR90gv2YKyJ3OLbQ1J\nJ53+yYZnH37kt9ILtqTsydxiW0PSSQ8MaXX9X7T60FrpFVtR9mRusa0h6aQHhHT3gQtqj289\neLn0ki0oezK32NaQdNL9IT0+9rD6byP9+PWHrJNes7myJ3OLbQ1JJ90f0v8Z9Vjvs+X7fF56\nzebKnswttjUknXR/SG89s+/ppCOk12yu7MncYltD0kn3hzT2L/qezhktvWZzZU/mFtsakk56\nQEjz+p5ey78gcohiW0PSSfeHdOQpfU8/eLT0ms2VPZlbbGtIOun+kD69z097n92dfUZ6zebK\nnswttjUknXR/SL/93YPu2FF53LTggIOtf0u27MncYltD0kkP+A3ZHx2UvfakSSeMy17/sPSS\nLSh7MrfY1pB00gP/iNBvr377Ptm+R1/HHxEastjWkHTSyR9a7Xm5R3q5FpU9mVtsa0g6af69\ndq6wrSHppAnJFbY1JJ00IbnCtoakkyYkV9jWkHTShOQK2xqSTpqQXGFbQ9JJE5IrbGtIOmlC\ncoVtDUknTUiusK0h6aQJyRW2NSSdNCG5wraGpJMmJFfY1pB00oTkCtsakk6akFxhW0PSSROS\nK2xrSDppQnKFbQ1JJ01IrrCtIemkCckVtjUknXTzkNbOP+f0q36d5903TpsyZ03/o6Lsydxi\nW0PSSTcP6bJZK5/7q7M359fPWvXs/Bk7+x4VZU/mFtsakk66aUgb5v4mz5/veLxr4srKj0aT\nVzQepY9a9mRusa0h6aRb+znSY5PWLe2s/vuFLrmz8dj4pp4dbSh7MrfY1lAbh9z/hVlLIW24\n+Kv5kvOqz2YvbDw2vm1LVxvKnswttjXUxiH3/xf5Wgnp6Qu/3JMvmd4b0vTBIW3vbkPZk7nF\ntobaOOSNexPSiil3V/66rP4l3aLGYwsB7l7Zk7nFtoakk24e0n+eVfuvVKyd+ESer5/0aONR\n+qhlT+YW2xqSTrppSFsvuKP6xeDmfN6lq565bmZP36Oi7MncYltD0kk3DWlFR83ifOOCqWfP\nrfzkqvGoKHsyt9jWkHTS/BEhV9jWkHTShOQK2xqSTpqQXGFbQ9JJE5IrbGtIOmlCcoVtDUkn\nTUiusK0h6aQJyRW2NSSdNCG5wraGpJMmJFfY1pB00oTkCtsakk6akFxhW0PSSROSK2xrSDpp\nQnKFbQ1JJ01IrrCtIemkCckVtjUknTQhucK2hqSTJiRX2NaQdNKE5ArbGpJOmpBcYVtD0kkT\nkitsa0g6aUJyhW0NSSdNSK6wrSHppAnJFbY1JJ00IbnCtoakkyYkV9jWkHTShOQK2xqSTpqQ\nXGFbQ9JJE5IrbGtIOmlCcoVtDUknTUiusK0h6aQJyRW2NSSdNCG5wraGpJMmJFfY1pB00oTk\nCtsakk6akFxhW0PSSROSK2xrSDppQnKFbQ1JJ01IrrCtIemkCckVtjUknTQhucK2hqSTJiRX\n2NaQdNKE5ArbGpJOmpBcYVtD0kkTkitsa0g6aUJyhW0NSSdNSK6wrSHppAnJFbY1JJ00IbnC\ntoakkyYkV9jWkHTShOQK2xqSTpqQXGFbQ9JJE5IrbGtIOmlCcoVtDUknTUiusK0h6aQJyRW2\nNSSdNCG5wraGpJMmJFfY1pB00oTkCtsakk6akFxhW0PSSROSK2xrSDppQnKFbQ1JJ01IrrCt\nIemkCckVtjUknTQhucK2hqSTJiRX2NaQdNKE5ArbGpJOmpBcYVtD0knrIfW0oezJ3GJbQ+1c\ncnEhbXuxDWVP5hbbGmrjkNcXF1Jbyp7MLbY1JJ00IbnCtoakkyYkV9jWkHTShOQK2xqSTpqQ\nXGFbQ9JJE5IrbGtIOmlCcoVtDUknTUiusK0h6aQJyRW2NSSdNCG5wraGpJMmJFfY1pB00oTk\nCtsakk6akFxhW0PSSROSK2xrSDppQnKFbQ1JJ01IrrCtIemkCckVtjUknTQhucK2hqSTJiRX\n2NaQdNKE5ArbGpJOmpBcYVtD0kkTkitsa0g6aUJyhW0NSSdNSK6wrSHppAnJFbY1JJ00IbnC\ntoakkyYkV9jWkHTShOQK2xqSTpqQXGFbQ9JJE5IrbGtIOmlCcoVtDUknTUiusK0h6aQJyRW2\nNSSdNCG5wraGpJMmJFfY1pB00oTkCtsakk6akFxhW0PSSROSK2xrSDppQnKFbQ1JJ01IrrCt\nIemkCckVtjUknTQhucK2hqSTJiRX2NaQdNKE5ArbGpJOmpBcYVtD0kkTkitsa0g6aUJyhW0N\nSSdNSK6wrSHppAnJFbY1JJ00IbnCtoakkyYkV9jWkHTShOQK2xqSTpqQXGFbQ9JJE5IrbGtI\nOmlCcoVtDUknTUiusK0h6aQJyRW2NSSdNCG5wraGpJMmJFfY1pB00oTkCtsakk6akFxhW0PS\nSROSK2xrSDppQnKFbQ1JJ01IrrCtIemkCckVtjUknTQhucK2hqSTJiRX2NaQdNKE5ArbGpJO\nuoWQnrl8UvWh+8ZpU+as6X9UlD2ZW2xrSDrp5iE9OHVBLaTrZ616dv6MnX2PirInc4ttDUkn\n3TykB55/qBpS18SVlR+NJq9oPEoftezJ3GJbQ9JJt/JzpFpISzt7Kn+95M7Go/RRy57MLbY1\nJJ10yyEtOa/6dPbCxmPjG7eua0PZk7nFtobaOOSX2ghpem9I05OQXmhD2ZO5xbaG2jjkF/c+\npGX1L+kWNR5b+H67V/ZkbrGtIemkWw5p7cQn8nz9pEcbj9JHLXsyt9jWkHTSzUNa13XfpK6u\nzfm8S1c9c93Mnr5HRdmTucW2hqSTbh7S+R1Vd+UbF0w9e+66vO9RUfZkbrGtIemk+SNCrrCt\nIemkCckVtjUknTQhucK2hqSTJiRX2NaQdNKE5ArbGpJOmpBcYVtD0kkTkitsa0g6aUJyhW0N\nSSdNSK6wrSHppAnJFbY1JJ00IbnCtoakkyYkV9jWkHTShOQK2xqSTpqQXGFbQ9JJE5IrbGtI\nOmlCcoVtDUknTUiusK0h6aQJyRW2NSSdNCG5wraGpJMmJFfY1pB00oTkCtsakk6akFxhW0PS\nSROSK2xrSDppQnKFbQ1JJ01IrrCtIemkCckVtjUknTQhucK2hqSTJiRX2NaQdNKE5ArbGpJO\nmpBcYVtD0kkTkitsa0g6aUJyhW0NSSdNSK6wrSHppAnJFbY1JJ00IbnCtoakkyYkV9jWkHTS\nhOQK2xqSTpqQXGFbQ9JJE5IrbGtIOmlCcoVtDUknTUiusK0h6aQJyRW2NSSdNCG5wraGpJMm\nJFfY1pB00oTkCtsakk6akFxhW0PSSROSK2xrSDppQnKFbQ1JJ01IrrCtIemkCckVtjUknTQh\nucK2hqSTJiRX2NaQdNKE5ArbGpJOmpBcYVtD0kkTkitsa0g6aUJyhW0NSSdNSK6wrSHppAnJ\nFbY1JJ00IbnCtoakkyYkV9jWkHTShOQK2xqSTpqQXGFbQ9JJE5IrbGtIOmlCcoVtDUknTUiu\nsK0h6aQJyRW2NSSdNCG5wraGpJMmJFfY1pB00nJI215sQ9mTucW2hto45PXFhdSzow1lT+YW\n2xpq45B3FhdSW8qezC22NSSdNCG5wraGpJMmJFfY1pB00oTkCtsakk6akFxhW0PSSROSK2xr\nSDppQnKFbQ1JJ01IrrCtIemkCckVtjUknTQhucK2hqSTJiRX2NaQdNKE5ArbGpJOmpBcYVtD\n0kkTkitsa0g6aUJyhW0NSSdNSK6wrSHppAnJFbY1JJ00IbnCtoakkyYkV9jWkHTShOQK2xqS\nTpqQXGFbQ9JJE5IrbGtIOmlCcoVtDUknTUiusK0h6aQJyRW2NSSdNCG5wraGpJMmJFfY1pB0\n0oTkCtsakk6akFxhW0PSSROSK2xrSDppQnKFbQ1JJ01IrrCtIemkCckVtjUknTQhucK2hg+Y\n+5kAAAc1SURBVKSTJiRX2NaQdNKE5ArbGpJOmpBcYVtD0kkTkitsa0g6aUJyhW0NSSdNSK6w\nrSHppAnJFbY1JJ00IbnCtoakkyYkV9jWkHTShOQK2xqSTpqQXGFbQ9JJE5IrbGtIOmlCcoVt\nDUknTUiusK0h6aQJyRW2NSSdNCG5wraGpJMmJFfY1pB00oTkCtsakk6akFxhW0PSSROSK2xr\nSDppQnKFbQ1JJ01IrrCtIemkCckVtjUknTQhucK2hqSTJiRX2NaQdNKE5ArbGpJOmpBcYVtD\n0kkTkitsa0g6aUJyhW0NSSdNSK6wrSHppAnJFbY1JJ00IbnCtoakkyYkV9jWkHTSex9S943T\npsxZI31Q/o/dLrY1JJ303od0/axVz86fsVP6qGVP5hbbGpJOeq9D6pq4svKj0uQV0kctezK3\n2NaQdNJ7HdLSzp7KXy+5U/qoZU/mFtsakk56r0Nacl71r7MXNt7e3t2Gsidzi20NtXHIG4WQ\npg8OaUsXENW69kNaVv/SblHj7Z7tw8vmru6yP4Xhq2td2Z9BwXa0H9LaiU/k+fpJj+7t9/Ni\nW9fG5u+E9nS9WPZnYGbvf/l73qWrnrluZo/B5zIkEJIhQhpg44KpZ89d1/z9nCIkQ4QUByEZ\nIqQ4CMkQIcVBSIYIKQ5CMkRIcRCSIUKKg5AMEVIchGSIkOIgJEOEFAchGSKkOAjJECHFQUiG\nCCkOQjJESHEQkiFCioOQDBFSHIRkiJDiICRDhBQHIRkipDgIyRAhxUFIhggpDkIyREhxEJIh\nQoqDkAwRUhyEZIiQ4iAkQ4QUByEZIqQ4CMkQIcVBSIYIKQ5CMkRIcRCSIUKKY+fm7WV/CsPX\n5q1lfwZmCAkoACEBBSAkoACEBBSAkIACEBJQAEICCkBIvXZ0/KzsT2GY+vUFp6zrWNF4q7Hz\nmo6nSvuMLBBSr1eE9IsnyvlEhp0br+re+e/djbcIaZh7RUhz7i3nExl2Pn/zwLcIaZjb0fHd\nWZ2fXJbnT332rDM+91x+zcRTLi37cxoWrpo0+bS1lS/t1t0w9dSrnqyFtPLyUy/5ISENTzs6\nLvrlxm9MXpNftGDzxnlX5vn5/IhUjDk3V8ZdkV9+w4at/3DO1kpIPecv2Pz8NYQ0PO3o+Kc8\n33bqvXn3ljxfOrmHkIpSD+nJjnV53nPmg5WQHutYnecPEdLwtKPj3yp/vfBr+S+uOffcMzt2\nEFJR6iE92FGzqBLSgxN35vl/E9LwtKPj4cpfL7rjuVMWbc2XEVJx6iEt66j/IxSVkB6Y2JPn\nqwhpeNrR8e08337a/Q9O2pHntxNSceoh/abjV5Xnq6sh/aLjt3n+ICENTzs6Ln5q+6LODb/q\neHTbD6/qeD6/+NaXy/6chofeX2yYfeXzO+49dW0lpK1TFnQ/M4uQhqetHQ9c2XnxT/P8q2dN\n+evuy85c88+d08v+nIaH3pDW/eUZp1/5aO2Xv399aeclP+v4r7I/sUIRElAAQgIKQEhAAQgJ\nKAAhAQUgJKAAhAQUgJCAAhDSkHZtVvGad3561W6+/T1v3d0beHUR0pB2bXb1LQtvOH3//W/b\n9bcvmLu7N/DqIqQh7drsoerD08eNXFL2p4I9IqQhrTek/LkxR1f++oM/GX/AsbdW377vxHG/\nd9oT9a/mnvvEm0b/3imP9X5pd+8J4/b/oxt78vyED/z8pPEHn7mmxM8+EkIa0hoh5VOzJ/Pv\n7XPi3fddlP1VpaMRJ3/91t8/ZHWtneNf/5Xv/+NRr9tYe+PbIz78ne/NzK7M8wlv/J/3r/nm\nPtPK/V8gDEIa0vpC+uvs3vzYP6z+N9Amjt+cH/fm7Xn+k/2+WG1nfXZV5e8+OffZWkhHvKn6\nz89NHvVCPiGr/iO/Ew4t75MPhZCGtL6QbsvuXJN9anPF32YPv5Bd3PvtlXa2vfbw7+1svPFs\ndlH12a3Z4nzCmOqzaSNf/U86JEIa0vpCuiG7f3nW61v/kV3X++3VH4T+7c3Zazv/cXvtjYez\n66t/+95sYT7h8Oqz8/k/8KuDnYe0vpAmjuhann38oZqu/8w+1/vttV9f2PHAFW/PjttUfeOR\nbE71b9+TfYWQXl3sPKQ1Qnps3wn52qzxCwcbsto/vPvU8/2/B/vl7O+rb6zOLqy+tTBbQkiv\nLnYe0npDeupto5bl+bsPrP5HwW+fvT0/6uANlbgqX+BV2vnpGdVf4X4ym1+r6shDN1fe+vCY\n9YT06mLnIa36Jxtu+eL0MaO/XnnjB6OOvv1fPjPqvDxfPPI931j4ltfVfvl79fijb73/n973\nmidrId0z8uS7vvvJbF5OSK8udh7San/Wbr83X/jr2ls/+tPxo95yw/bKs3uOH/O6jz1e/znS\nLz72ulGHfuznvT9huu8DY0cfe1tOSK8ydgYKQEhAAQgJKAAhAQUgJKAAhAQUgJCAAhASUABC\nAgpASEABCAkoACEBBfj//Kkddh2F3QsAAAAASUVORK5CYII="
+          },
+          "metadata": {
+            "image/png": {
+              "width": 420,
+              "height": 420
+            }
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "summary(data$win_by_runs)\n",
+        "summary(data$win_by_wickets)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 86
+        },
+        "id": "Lmv9vlFU6kXs",
+        "outputId": "dcb5b374-6966-44eb-df90-3c567c0bf664"
+      },
+      "execution_count": 12,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n",
+              "   0.00    0.00    0.00   13.28   19.00  146.00 "
+            ]
+          },
+          "metadata": {}
+        },
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. \n",
+              "  0.000   0.000   4.000   3.351   6.000  10.000 "
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "ggplot(data, aes(x = win_by_runs)) +\n",
+        "  geom_histogram(bins = 30) +\n",
+        "    theme_minimal() +\n",
+        "      labs(\n",
+        "          title = \"Distribution of Winning Runs\",\n",
+        "              x = \"Runs\",\n",
+        "                  y = \"Frequency\"\n",
+        "                    )"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 437
+        },
+        "id": "FKkRghi36rvu",
+        "outputId": "82eb4859-9ccb-4dbf-f6f2-aa958aef1ff9"
+      },
+      "execution_count": 13,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "plot without title"
+            ],
+            "image/png": "iVBORw0KGgoAAAANSUhEUgAAA0gAAANICAMAAADKOT/pAAAC9FBMVEUAAAABAQECAgIDAwME\nBAQFBQUGBgYHBwcICAgJCQkKCgoLCwsMDAwNDQ0ODg4PDw8QEBARERESEhITExMUFBQVFRUW\nFhYXFxcYGBgZGRkaGhobGxscHBwdHR0eHh4fHx8gICAhISEiIiIjIyMkJCQmJiYnJycoKCgp\nKSkqKiorKyssLCwtLS0uLi4vLy8wMDAxMTEyMjIzMzM0NDQ1NTU2NjY3Nzc4ODg5OTk6Ojo7\nOzs8PDw9PT0+Pj4/Pz9AQEBBQUFCQkJDQ0NERERFRUVGRkZHR0dISEhJSUlLS0tNTU1OTk5P\nT09QUFBRUVFSUlJTU1NUVFRVVVVWVlZXV1dYWFhZWVlaWlpbW1tcXFxdXV1eXl5fX19gYGBh\nYWFiYmJjY2NkZGRlZWVmZmZnZ2doaGhpaWlqampra2tsbGxtbW1ubm5vb29wcHBxcXFycnJz\nc3N0dHR1dXV2dnZ3d3d4eHh5eXl6enp7e3t8fHx9fX1+fn5/f3+AgICBgYGCgoKDg4OEhISF\nhYWGhoaHh4eIiIiJiYmKioqLi4uMjIyNjY2Ojo6Pj4+QkJCRkZGSkpKTk5OVlZWWlpaXl5eY\nmJiZmZmampqbm5ucnJydnZ2enp6fn5+goKChoaGioqKjo6OkpKSlpaWmpqanp6eoqKipqamq\nqqqrq6usrKytra2urq6vr6+wsLCxsbGysrKzs7O0tLS1tbW2tra3t7e4uLi5ubm6urq7u7u8\nvLy9vb2+vr6/v7/AwMDBwcHCwsLDw8PExMTFxcXGxsbHx8fIyMjJycnKysrLy8vMzMzNzc3O\nzs7Pz8/Q0NDR0dHS0tLT09PU1NTV1dXW1tbX19fY2NjZ2dna2trb29vc3Nzd3d3e3t7f39/g\n4ODh4eHi4uLj4+Pk5OTl5eXm5ubn5+fo6Ojp6enq6urr6+vs7Ozt7e3u7u7v7+/w8PDx8fHy\n8vLz8/P09PT19fX29vb39/f4+Pj5+fn6+vr7+/v8/Pz9/f3+/v7///8xoIeuAAAACXBIWXMA\nABJ0AAASdAHeZh94AAAgAElEQVR4nO3de4BcZWH38ScJSUggQRR8kesrRJS7Il5AQMmrRZON\npBAIkhCRUgjlErARYk0ovoklpqFF7BuLtNZLMdaKgERQ6Ks2CaKQ1iivhUQKCSE5e89lL8nu\n+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"
+          },
+          "metadata": {
+            "image/png": {
+              "width": 420,
+              "height": 420
+            }
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "team_wins <- data %>%\n",
+        "  group_by(winner) %>%\n",
+        "    summarise(wins = n()) %>%\n",
+        "      arrange(desc(wins))\n",
+        "\n",
+        "      head(team_wins)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 286
+        },
+        "id": "hiv2PDr-6vHg",
+        "outputId": "3451f338-0490-4a1b-8ecc-e63e1e238e8d"
+      },
+      "execution_count": 14,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/html": [
+              "<table class=\"dataframe\">\n",
+              "<caption>A tibble: 6 × 2</caption>\n",
+              "<thead>\n",
+              "\t<tr><th scope=col>winner</th><th scope=col>wins</th></tr>\n",
+              "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th></tr>\n",
+              "</thead>\n",
+              "<tbody>\n",
+              "\t<tr><td>Mumbai Indians             </td><td>109</td></tr>\n",
+              "\t<tr><td>Chennai Super Kings        </td><td>100</td></tr>\n",
+              "\t<tr><td>Kolkata Knight Riders      </td><td> 92</td></tr>\n",
+              "\t<tr><td>Royal Challengers Bangalore</td><td> 84</td></tr>\n",
+              "\t<tr><td>Kings XI Punjab            </td><td> 82</td></tr>\n",
+              "\t<tr><td>Rajasthan Royals           </td><td> 75</td></tr>\n",
+              "</tbody>\n",
+              "</table>\n"
+            ],
+            "text/markdown": "\nA tibble: 6 × 2\n\n| winner &lt;chr&gt; | wins &lt;int&gt; |\n|---|---|\n| Mumbai Indians              | 109 |\n| Chennai Super Kings         | 100 |\n| Kolkata Knight Riders       |  92 |\n| Royal Challengers Bangalore |  84 |\n| Kings XI Punjab             |  82 |\n| Rajasthan Royals            |  75 |\n\n",
+            "text/latex": "A tibble: 6 × 2\n\\begin{tabular}{ll}\n winner & wins\\\\\n <chr> & <int>\\\\\n\\hline\n\t Mumbai Indians              & 109\\\\\n\t Chennai Super Kings         & 100\\\\\n\t Kolkata Knight Riders       &  92\\\\\n\t Royal Challengers Bangalore &  84\\\\\n\t Kings XI Punjab             &  82\\\\\n\t Rajasthan Royals            &  75\\\\\n\\end{tabular}\n",
+            "text/plain": [
+              "  winner                      wins\n",
+              "1 Mumbai Indians              109 \n",
+              "2 Chennai Super Kings         100 \n",
+              "3 Kolkata Knight Riders        92 \n",
+              "4 Royal Challengers Bangalore  84 \n",
+              "5 Kings XI Punjab              82 \n",
+              "6 Rajasthan Royals             75 "
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "A48wqGvw7yt0"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "library(dplyr)\n",
+        "\n",
+        "stat_data <- data %>%\n",
+        "  filter(!is.na(winner)) %>%\n",
+        "    mutate(\n",
+        "        toss_match_win = ifelse(toss_winner == winner, \"Yes\", \"No\")\n",
+        "          )"
+      ],
+      "metadata": {
+        "id": "6sXscLWO7IJt"
+      },
+      "execution_count": 16,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "toss_table <- table(stat_data$toss_match_win)\n",
+        "toss_table"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 69
+        },
+        "id": "bieiwaLm7QeW",
+        "outputId": "5d47e3be-dfe4-448a-f900-e564e7b74f62"
+      },
+      "execution_count": 17,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "\n",
+              " No Yes \n",
+              "363 393 "
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "chisq_test <- chisq.test(toss_table)\n",
+        "chisq_test"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 104
+        },
+        "id": "fBA82Qrn7UMm",
+        "outputId": "08cffbd3-112e-4e2e-c30e-f7301fb46e57"
+      },
+      "execution_count": 18,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "\n",
+              "\tChi-squared test for given probabilities\n",
+              "\n",
+              "data:  toss_table\n",
+              "X-squared = 1.1905, df = 1, p-value = 0.2752\n"
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "runs <- data$win_by_runs[data$win_by_runs > 0]"
+      ],
+      "metadata": {
+        "id": "-U2VCYRU7YF0"
+      },
+      "execution_count": 19,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "shapiro.test(runs)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 104
+        },
+        "id": "--T1Xbuy7fWx",
+        "outputId": "9ea575a6-f62e-431e-f836-1653e6d9c353"
+      },
+      "execution_count": 20,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "\n",
+              "\tShapiro-Wilk normality test\n",
+              "\n",
+              "data:  runs\n",
+              "W = 0.82697, p-value < 2.2e-16\n"
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "win_type <- data %>%\n",
+        "  mutate(\n",
+        "      win_category = case_when(\n",
+        "            win_by_runs > 0 ~ \"Batting First\",\n",
+        "                  win_by_wickets > 0 ~ \"Chasing\",\n",
+        "                        TRUE ~ NA_character_\n",
+        "                            )\n",
+        "                              )"
+      ],
+      "metadata": {
+        "id": "gxTf1mEo7jzv"
+      },
+      "execution_count": 21,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "table(win_type$win_category)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 69
+        },
+        "id": "CVMOlHPY7p6c",
+        "outputId": "944a7cbe-a4a7-434e-8acd-95f55587060b"
+      },
+      "execution_count": 22,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "\n",
+              "Batting First       Chasing \n",
+              "          337           406 "
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "prop.table(table(win_type$win_category))"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 69
+        },
+        "id": "Ei1yqC9m7tdi",
+        "outputId": "07af4759-8e54-4de8-9429-012821e9f62f"
+      },
+      "execution_count": 23,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "\n",
+              "Batting First       Chasing \n",
+              "    0.4535666     0.5464334 "
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "library(ggplot2)\n",
+        "\n",
+        "ggplot(win_type, aes(x = win_category)) +\n",
+        "  geom_bar() +\n",
+        "    theme_minimal() +\n",
+        "      labs(\n",
+        "          title = \"Match Wins by Strategy Type\",\n",
+        "              x = \"Win Strategy\",\n",
+        "                  y = \"Number of Matches\"\n",
+        "                    )"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 437
+        },
+        "id": "007YHnNd73L3",
+        "outputId": "797ae976-5fc8-407b-b305-3befb2eb8055"
+      },
+      "execution_count": 24,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "plot without title"
+            ],
+            "image/png": "iVBORw0KGgoAAAANSUhEUgAAA0gAAANICAMAAADKOT/pAAADAFBMVEUAAAABAQECAgIDAwME\nBAQFBQUGBgYHBwcICAgJCQkKCgoLCwsMDAwNDQ0ODg4PDw8QEBARERESEhITExMUFBQVFRUW\nFhYXFxcYGBgZGRkaGhobGxscHBwdHR0eHh4fHx8gICAhISEiIiIjIyMkJCQlJSUmJiYnJyco\nKCgpKSkqKiorKyssLCwtLS0uLi4vLy8wMDAxMTEyMjIzMzM0NDQ1NTU2NjY3Nzc4ODg5OTk6\nOjo7Ozs8PDw9PT0+Pj4/Pz9AQEBBQUFCQkJDQ0NERERFRUVGRkZHR0dISEhJSUlKSkpLS0tM\nTExNTU1OTk5PT09QUFBRUVFSUlJTU1NUVFRVVVVWVlZXV1dYWFhZWVlaWlpbW1tcXFxdXV1e\nXl5fX19gYGBhYWFiYmJjY2NkZGRlZWVmZmZnZ2doaGhpaWlqampra2tsbGxtbW1ubm5vb29w\ncHBxcXFycnJzc3N0dHR1dXV2dnZ3d3d4eHh5eXl6enp7e3t8fHx9fX1+fn5/f3+AgICBgYGC\ngoKDg4OEhISFhYWGhoaHh4eIiIiJiYmKioqLi4uMjIyNjY2Ojo6Pj4+QkJCRkZGSkpKTk5OU\nlJSVlZWWlpaXl5eYmJiZmZmampqbm5ucnJydnZ2enp6fn5+goKChoaGioqKjo6OkpKSlpaWm\npqanp6eoqKipqamqqqqrq6usrKytra2urq6vr6+wsLCxsbGysrKzs7O0tLS1tbW2tra3t7e4\nuLi5ubm6urq7u7u8vLy9vb2+vr6/v7/AwMDBwcHCwsLDw8PExMTFxcXGxsbHx8fIyMjJycnK\nysrLy8vMzMzNzc3Ozs7Pz8/Q0NDR0dHS0tLT09PU1NTV1dXW1tbX19fY2NjZ2dna2trb29vc\n3Nzd3d3e3t7f39/g4ODh4eHi4uLj4+Pk5OTl5eXm5ubn5+fo6Ojp6enq6urr6+vs7Ozt7e3u\n7u7v7+/w8PDx8fHy8vLz8/P09PT19fX29vb39/f4+Pj5+fn6+vr7+/v8/Pz9/f3+/v7////i\nsF19AAAACXBIWXMAABJ0AAASdAHeZh94AAAgAElEQVR4nO3dCXxU1fn/8ZOEyBICWsEVSrXW\nFXHBIoigFUttbRIUN4LsdYXKohZ/RAWqBStSrP27Ua1KrRax+kMREXBXQOhPEam2ImhVQBwI\n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\nDkIyyPa6IqTgICSDbK8rQgoOQjLI9roipOAgJINsrytCCg5CMsj2uiKk4CAkg2yvK0IKDkIy\nyPa6IqTgICSDbK8rQgoOQjLI9roipOAgJINsrytCsr0DDBE2LkIiICQGYeMiJAJCYhA2LkIi\nICQGYeMiJAJCYhA2LkIiICQGYeMiJAJCYhA2LkIiICQGYeMiJAJCYhA2LkIiICQGYeMiJAJC\nYhA2LkIiICQGYeMiJAJCYhA2LkIiICQGYeMiJAJCYhA2LkIiICQGYeMiJAJCYhA2LkIiICQG\nYeMiJAJCYhA2LkIiICQGYeMiJAJCYhA2LkIiICQGYeMiJAJCYhA2LkIiICQGYeMiJAJCYhA2\nLkIiICQGYeMiJAJCYhA2LkIiICQGYeMiJAJCYhA2LkIiICQGYeMiJAJCYhA2LkIiICQGYeMi\nJAJCYhA2LkIiICQGYeMiJAJCYhA2LkIiICQGYeMiJAJCYhA2LkIiICQGYeMiJAJCYhA2LkIi\nICQGYeMiJAJCYhA2LkIiICQGYeMiJAJCYhA2LkIiICQGYeMiJAJCYhA2LkIiICQGYeMiJAJC\nYhA2LkIiICQGYeMiJAJCYhA2LkIiICQGYeMiJAJCYhA2LkIiICQGYeMiJAJCYhA2LkIiICQG\nYeMiJAJCYhA2LkIiICQGYeMiJAJCYhA2LkIiNB7Sl3cUD5r0ida7Zw4rnrolcWwO2zvAEGHj\nIiRCoyFVDvvD15tmXbFP3zFxw8YZo6trjs1hewcYImxchERoNKQdz+3T+uuC9aHC9c5HowGr\n48dmncX2DjBE2LgIidCkz5F2PXBdxbKBYefWmLnxY7POYnsHGCJsXIREaEJI1RcX/M9WvWi4\ne7tkdvwYf7RqXxPY3gGGCBu3wXmDUxraa/sSPMqaE5L+as30q3cvGhELaYQ3pPJQE9jeAYYI\nG7fBeeUqbVZIzgelyxesiL6kmxc/1jxU3gS2d4AhwsZtcN7gbA+V2b4Ej/1ND+n9q8q1Dg9e\nsK1wnfMStWht/NikAONs7wBDhI2Lz5EIjYa0e8hdX26ePXCznj5uw9dTJoRrjs1hewcYImxc\nhERo/KXdF5Mvveym1VrvnTV08LTSxLE5bO8AQ4SNi5AI+CNCDMLGRUgEhMQgbFyEREBIDMLG\nRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyE\nREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgE\nhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBI\nDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQg\nbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLG\nRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyE\nREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgE\nhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBI\nDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQg\nbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLG\nRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEROCHFG4C2zvAEGHjNjhvcHaGqmxfgpd/Ie0vbQLb\nO8AQYeM2OG9wtoZsX4HXjgZC2rtJ632P3bOeW1ddtneAIcLGxUs7giekTw6ZrivPUKr9+z6f\nxfYOMETYuAiJ4Anp4pM/039VD3x21iU+n8X2DjBE2LgIieAJ6ZC/aX1RV63/1tnns9jeAYYI\nGxchETwhHfCarjroN1ovPsDns9jeAYYIGxchETwhdX5EL1avaf3o4T6fxfYOMETYuAiJ4Alp\n1GG3dPlhld7SDZ8jNYmwcRESwRPSpp6qw3KtL2//oc9nsb0DDBE2LkIi1PmG7M4K55dV3/h9\nFts7wBBh4yIkQp2QylY+F9KVvp/F9g4wRNi4CIngDemefKWW60nD/U7J9g4wRNi4CIngCWm2\nKnzICemJFnf7fBbbO8AQYeMiJIInpG7X6jInJP0/x/p8Fts7wBBh4yIkgiekVkuiIb2S6/NZ\nbO8AQ4SNi5AI3j8i9GI0pGfa+XwW2zvAEGHjIiSCJ6Tzz9nnhrSta3+fz2J7BxgibFyERPCE\n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\nql98Wl4W4/NZbO8AQ4SNi5AIiZCUaqXws7+bRdi4CImQSGZybT6fxfYOMETYuAiJgD9rxyBs\nXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZF\nSASExCBsXIREQEgMwsZFSAR+SOEmsL0DDBE2boPzBmdnqMr2JXj5F1LF9iawvQMMETZug/MG\nZ2vI9hV47fQvpCaxvQMMETYuXtoREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKD\nsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgb\nFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHER\nEgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyER\nEBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEh\nMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKD\nsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgb\nFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHER\nEgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyER\nEBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEh\nMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKDsHEREgEhMQgbFyEREBKD\nsHEREqEJIX19Y5F72D1zWPHULYljc9jeAYYIGxchERoP6a2hsyIh3TFxw8YZo6trjs1hewcY\nImxchERoPKRXv13uhhQqXO98NBqwOn5s1lls7wBDhI2LkAhN+RwpEtKygWHn1zFz48dmncX2\nDjBE2LgIidDkkBYNd2+WzI4f4w9W7mkC2zvAEGHjNjhvcEpDu21fgse+7xDSiFhII7whlYea\nwPYOMETYuA3OK1dp80NaEX1JNy9+jD9YXdEEtneAIcLGbXDe4GwPldu+BK/mh7StcJ3zErVo\nbfzYhPdLsL0DDBE2Lj5HIjQeUmlocVEoVKanj9vw9ZQJ4Zpjc9jeAYYIGxchERoPaVSBa77e\nO2vo4GnOa8L4sTls7wBDhI2LkAj4I0IMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgM\nwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBs\nXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZF\nSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIRE\nQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASE\nxCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgM\nwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBs\nXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZF\nSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIRE\nQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASE\nxCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgMwsZFSASExCBsXIREQEgM\nwsZFSASExCBsXIREYIcUrmoC2zvAEGHjNjhvcHaEKmxfgkcia3ZIFdubwPYOMETYuA3OG5yt\nIdtX4LXTv5CaxPYOMETYuHhpR0BIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLG\nRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyE\nREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgEhMQgbFyEREBIDMLGRUgE\n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\nCcAGhATgA4QE4AOEBOADhATgA4SUQs5sXeYeFqjo94sHZG0+87j6bxX63ekHt+j4s0WBXho0\nAiGlkKlqsXsYqzq5h6oDT9ezptV7o20/aDPmyafvPDr7aa0/SPY/X9I7wTAsegpZqW5yDyf2\nUp84h+WqJNkb/UH93T2UHtmlWt+X7H++pHeCYVj0FBLu2M35daOak3ufc/yteke7L+36nP3+\nefkdr4j/ndCbVfQv+X21T/9MKdVd9+7zYqdeWj/949b53Z2PUtE79Rvn57c+zf3zaNWTO7U8\nffGYXN374MhfVz+ng6x/wCIgCCmVXKk2a/242nxWgfObvgdVRULq1/nHS7Y8mzMs9jZPq4u2\nx25+WqRWfazP63b8/Qv039VFCxZcoBbE7lya0/fFxdeqe7T+nbrslUcO75GnH1XPOu+zOfsG\nK6NlOoSUSp5Sc7QuPknfll+hd+derqMhKfcvsfU7IvY21Zeplr/4/YrID6Qa5f7P10895/w6\n7Tzn483OFoNjd552jPuHVgvzy8KHdg1rvULl6d1t3Tz/pP7PymiZDiGlkq3Zg3X40LH6TfWW\nXqAej4XUxn1oWHbNWy0qPkKpDrfsjYd0QOK1Wqc+0Tu3qLFljofUyk1qvPtA1zytR7RwXh72\n6RrwTEIgpJTS89DwauflWUXebXps1jexkLq4j4zy/C+1/s99VK/qWEiRj1U7b+vaLidH9Y6+\n5Qcq5rkPVOQv8Ax0QnpbzdQbs+4OeiYZEFJKmapW35O7W+uf99Inna4bDknr8Ej1ZiykyON9\ncya9teajI2pCGrk8IrTC/TxJ60uckPSx3fS9OZsCHEcQhJRSVql7f3m2c5yZu165P5Wgfkjl\nTz4fvfGEerJWSOvUVc6vla1iIW1Tw2LP+Km62T2c7IY0Xa3tcUFQowiDkFJK+JBLO0x1jh+q\nG9S7OllI4R91dP/Cua76pVqjf6UqY49/rNx3u0/11NE7e7R3v7T3REllZXv3k6KVyg1pU06x\nejrwmWRASKllSF4koPChbQ9yf3Jbkpd2r7fNv+qPj/y2m/q11rerqc9GH6/ofOT8d24899z8\n1/ZE7nwjt9sTr9yaO1zrCWr4Kw//oLcbkr5Qtav3g9DBFwgptTyl2lW6x0HqcveQ7HOkf438\nYcsWh/7c/abQV6flHhd7fFWvNodes/PFDgf9J3Knfvun+bnH3u08V/mvO+T1ea+4rftG/1C/\nCngeMRCSDP0Od399Qb1n+0IyFULKdLMudj4sbW//c+dmxRk9bV9NxkJImW6O+uX8ub2yluov\n51+Qs9L21WQshJTx5pyW1+asl7R+NOuol2xfS+ZCSAA+QEgAPkBIAD5ASAA+QEgAPkBIAD5A\nSAA+QEgAPvj/KuXgxm965NoAAAAASUVORK5CYII="
+          },
+          "metadata": {
+            "image/png": {
+              "width": 420,
+              "height": 420
+            }
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "library(dplyr)\n",
+        "\n",
+        "team_matches <- data %>%\n",
+        "  select(team1, team2) %>%\n",
+        "    pivot_longer(cols = c(team1, team2), values_to = \"team\") %>%\n",
+        "      group_by(team) %>%\n",
+        "        summarise(matches_played = n())"
+      ],
+      "metadata": {
+        "id": "ReZY4fUl76TB"
+      },
+      "execution_count": 25,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "team_wins <- data %>%\n",
+        "  filter(!is.na(winner)) %>%\n",
+        "    group_by(winner) %>%\n",
+        "      summarise(wins = n()) %>%\n",
+        "        rename(team = winner)"
+      ],
+      "metadata": {
+        "id": "faoS_HN38Tim"
+      },
+      "execution_count": 26,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "team_consistency <- team_matches %>%\n",
+        "  left_join(team_wins, by = \"team\") %>%\n",
+        "    mutate(\n",
+        "        wins = ifelse(is.na(wins), 0, wins),\n",
+        "            consistency_score = round(wins / matches_played, 3)\n",
+        "              ) %>%\n",
+        "                arrange(desc(consistency_score))\n",
+        "\n",
+        "                team_consistency"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 568
+        },
+        "id": "aINun9728ZOO",
+        "outputId": "df4ef350-0095-4ba4-a568-118ff51d639e"
+      },
+      "execution_count": 27,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/html": [
+              "<table class=\"dataframe\">\n",
+              "<caption>A tibble: 15 × 4</caption>\n",
+              "<thead>\n",
+              "\t<tr><th scope=col>team</th><th scope=col>matches_played</th><th scope=col>wins</th><th scope=col>consistency_score</th></tr>\n",
+              "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+              "</thead>\n",
+              "<tbody>\n",
+              "\t<tr><td>Delhi Capitals             </td><td> 16</td><td> 10</td><td>0.625</td></tr>\n",
+              "\t<tr><td>Rising Pune Supergiant     </td><td> 16</td><td> 10</td><td>0.625</td></tr>\n",
+              "\t<tr><td>Chennai Super Kings        </td><td>164</td><td>100</td><td>0.610</td></tr>\n",
+              "\t<tr><td>Mumbai Indians             </td><td>187</td><td>109</td><td>0.583</td></tr>\n",
+              "\t<tr><td>Sunrisers Hyderabad        </td><td>108</td><td> 58</td><td>0.537</td></tr>\n",
+              "\t<tr><td>Kolkata Knight Riders      </td><td>178</td><td> 92</td><td>0.517</td></tr>\n",
+              "\t<tr><td>Rajasthan Royals           </td><td>147</td><td> 75</td><td>0.510</td></tr>\n",
+              "\t<tr><td>Royal Challengers Bangalore</td><td>180</td><td> 84</td><td>0.467</td></tr>\n",
+              "\t<tr><td>Kings XI Punjab            </td><td>176</td><td> 82</td><td>0.466</td></tr>\n",
+              "\t<tr><td>Gujarat Lions              </td><td> 30</td><td> 13</td><td>0.433</td></tr>\n",
+              "\t<tr><td>Kochi Tuskers Kerala       </td><td> 14</td><td>  6</td><td>0.429</td></tr>\n",
+              "\t<tr><td>Delhi Daredevils           </td><td>161</td><td> 67</td><td>0.416</td></tr>\n",
+              "\t<tr><td>Deccan Chargers            </td><td> 75</td><td> 29</td><td>0.387</td></tr>\n",
+              "\t<tr><td>Rising Pune Supergiants    </td><td> 14</td><td>  5</td><td>0.357</td></tr>\n",
+              "\t<tr><td>Pune Warriors              </td><td> 46</td><td> 12</td><td>0.261</td></tr>\n",
+              "</tbody>\n",
+              "</table>\n"
+            ],
+            "text/markdown": "\nA tibble: 15 × 4\n\n| team &lt;chr&gt; | matches_played &lt;int&gt; | wins &lt;int&gt; | consistency_score &lt;dbl&gt; |\n|---|---|---|---|\n| Delhi Capitals              |  16 |  10 | 0.625 |\n| Rising Pune Supergiant      |  16 |  10 | 0.625 |\n| Chennai Super Kings         | 164 | 100 | 0.610 |\n| Mumbai Indians              | 187 | 109 | 0.583 |\n| Sunrisers Hyderabad         | 108 |  58 | 0.537 |\n| Kolkata Knight Riders       | 178 |  92 | 0.517 |\n| Rajasthan Royals            | 147 |  75 | 0.510 |\n| Royal Challengers Bangalore | 180 |  84 | 0.467 |\n| Kings XI Punjab             | 176 |  82 | 0.466 |\n| Gujarat Lions               |  30 |  13 | 0.433 |\n| Kochi Tuskers Kerala        |  14 |   6 | 0.429 |\n| Delhi Daredevils            | 161 |  67 | 0.416 |\n| Deccan Chargers             |  75 |  29 | 0.387 |\n| Rising Pune Supergiants     |  14 |   5 | 0.357 |\n| Pune Warriors               |  46 |  12 | 0.261 |\n\n",
+            "text/latex": "A tibble: 15 × 4\n\\begin{tabular}{llll}\n team & matches\\_played & wins & consistency\\_score\\\\\n <chr> & <int> & <int> & <dbl>\\\\\n\\hline\n\t Delhi Capitals              &  16 &  10 & 0.625\\\\\n\t Rising Pune Supergiant      &  16 &  10 & 0.625\\\\\n\t Chennai Super Kings         & 164 & 100 & 0.610\\\\\n\t Mumbai Indians              & 187 & 109 & 0.583\\\\\n\t Sunrisers Hyderabad         & 108 &  58 & 0.537\\\\\n\t Kolkata Knight Riders       & 178 &  92 & 0.517\\\\\n\t Rajasthan Royals            & 147 &  75 & 0.510\\\\\n\t Royal Challengers Bangalore & 180 &  84 & 0.467\\\\\n\t Kings XI Punjab             & 176 &  82 & 0.466\\\\\n\t Gujarat Lions               &  30 &  13 & 0.433\\\\\n\t Kochi Tuskers Kerala        &  14 &   6 & 0.429\\\\\n\t Delhi Daredevils            & 161 &  67 & 0.416\\\\\n\t Deccan Chargers             &  75 &  29 & 0.387\\\\\n\t Rising Pune Supergiants     &  14 &   5 & 0.357\\\\\n\t Pune Warriors               &  46 &  12 & 0.261\\\\\n\\end{tabular}\n",
+            "text/plain": [
+              "   team                        matches_played wins consistency_score\n",
+              "1  Delhi Capitals               16             10  0.625            \n",
+              "2  Rising Pune Supergiant       16             10  0.625            \n",
+              "3  Chennai Super Kings         164            100  0.610            \n",
+              "4  Mumbai Indians              187            109  0.583            \n",
+              "5  Sunrisers Hyderabad         108             58  0.537            \n",
+              "6  Kolkata Knight Riders       178             92  0.517            \n",
+              "7  Rajasthan Royals            147             75  0.510            \n",
+              "8  Royal Challengers Bangalore 180             84  0.467            \n",
+              "9  Kings XI Punjab             176             82  0.466            \n",
+              "10 Gujarat Lions                30             13  0.433            \n",
+              "11 Kochi Tuskers Kerala         14              6  0.429            \n",
+              "12 Delhi Daredevils            161             67  0.416            \n",
+              "13 Deccan Chargers              75             29  0.387            \n",
+              "14 Rising Pune Supergiants      14              5  0.357            \n",
+              "15 Pune Warriors                46             12  0.261            "
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "venue_matches <- data %>%\n",
+        "  group_by(venue) %>%\n",
+        "    summarise(total_matches = n())"
+      ],
+      "metadata": {
+        "id": "C3Ap5SiA8f4A"
+      },
+      "execution_count": 28,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "venue_margin <- data %>%\n",
+        "  group_by(venue) %>%\n",
+        "    summarise(\n",
+        "        avg_run_margin = mean(win_by_runs, na.rm = TRUE),\n",
+        "            avg_wicket_margin = mean(win_by_wickets, na.rm = TRUE)\n",
+        "              )\n",
+        "\n",
+        "season_team_wins <- data %>%\n",
+        "                filter(!is.na(winner)) %>%\n",
+        "                  group_by(Season, winner) %>%\n",
+        "                    summarise(wins = n(), .groups = \"drop\")"
+      ],
+      "metadata": {
+        "id": "piT0zALD8l-Z"
+      },
+      "execution_count": 34,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "season_team_wins <- data %>%\n",
+        "  filter(!is.na(winner)) %>%\n",
+        "    group_by(Season, winner) %>%\n",
+        "      summarise(wins = n(), .groups = \"drop\")"
+      ],
+      "metadata": {
+        "id": "24t0Yf6N9IqK"
+      },
+      "execution_count": 35,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "head(season_team_wins)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 286
+        },
+        "id": "vGhuFjIN9Ydp",
+        "outputId": "e56a642c-9073-46ec-ea53-68f80d017af2"
+      },
+      "execution_count": 36,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/html": [
+              "<table class=\"dataframe\">\n",
+              "<caption>A tibble: 6 × 3</caption>\n",
+              "<thead>\n",
+              "\t<tr><th scope=col>Season</th><th scope=col>winner</th><th scope=col>wins</th></tr>\n",
+              "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th></tr>\n",
+              "</thead>\n",
+              "<tbody>\n",
+              "\t<tr><td>IPL-2008</td><td>Chennai Super Kings  </td><td> 9</td></tr>\n",
+              "\t<tr><td>IPL-2008</td><td>Deccan Chargers      </td><td> 2</td></tr>\n",
+              "\t<tr><td>IPL-2008</td><td>Delhi Daredevils     </td><td> 7</td></tr>\n",
+              "\t<tr><td>IPL-2008</td><td>Kings XI Punjab      </td><td>10</td></tr>\n",
+              "\t<tr><td>IPL-2008</td><td>Kolkata Knight Riders</td><td> 6</td></tr>\n",
+              "\t<tr><td>IPL-2008</td><td>Mumbai Indians       </td><td> 7</td></tr>\n",
+              "</tbody>\n",
+              "</table>\n"
+            ],
+            "text/markdown": "\nA tibble: 6 × 3\n\n| Season &lt;chr&gt; | winner &lt;chr&gt; | wins &lt;int&gt; |\n|---|---|---|\n| IPL-2008 | Chennai Super Kings   |  9 |\n| IPL-2008 | Deccan Chargers       |  2 |\n| IPL-2008 | Delhi Daredevils      |  7 |\n| IPL-2008 | Kings XI Punjab       | 10 |\n| IPL-2008 | Kolkata Knight Riders |  6 |\n| IPL-2008 | Mumbai Indians        |  7 |\n\n",
+            "text/latex": "A tibble: 6 × 3\n\\begin{tabular}{lll}\n Season & winner & wins\\\\\n <chr> & <chr> & <int>\\\\\n\\hline\n\t IPL-2008 & Chennai Super Kings   &  9\\\\\n\t IPL-2008 & Deccan Chargers       &  2\\\\\n\t IPL-2008 & Delhi Daredevils      &  7\\\\\n\t IPL-2008 & Kings XI Punjab       & 10\\\\\n\t IPL-2008 & Kolkata Knight Riders &  6\\\\\n\t IPL-2008 & Mumbai Indians        &  7\\\\\n\\end{tabular}\n",
+            "text/plain": [
+              "  Season   winner                wins\n",
+              "1 IPL-2008 Chennai Super Kings    9  \n",
+              "2 IPL-2008 Deccan Chargers        2  \n",
+              "3 IPL-2008 Delhi Daredevils       7  \n",
+              "4 IPL-2008 Kings XI Punjab       10  \n",
+              "5 IPL-2008 Kolkata Knight Riders  6  \n",
+              "6 IPL-2008 Mumbai Indians         7  "
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "season_competitiveness <- season_team_wins %>%\n",
+        "  group_by(Season) %>%\n",
+        "    summarise(\n",
+        "        win_variance = var(wins)\n",
+        "          ) %>%\n",
+        "            arrange(win_variance)\n",
+        "\n",
+        "            season_competitiveness"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 474
+        },
+        "id": "1yiHuf8G9bub",
+        "outputId": "5493b495-89ae-4c29-cb95-8f3757c30309"
+      },
+      "execution_count": 37,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/html": [
+              "<table class=\"dataframe\">\n",
+              "<caption>A tibble: 12 × 2</caption>\n",
+              "<thead>\n",
+              "\t<tr><th scope=col>Season</th><th scope=col>win_variance</th></tr>\n",
+              "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+              "</thead>\n",
+              "<tbody>\n",
+              "\t<tr><td>IPL-2010</td><td> 4.285714</td></tr>\n",
+              "\t<tr><td>IPL-2018</td><td> 4.857143</td></tr>\n",
+              "\t<tr><td>IPL-2016</td><td> 5.142857</td></tr>\n",
+              "\t<tr><td>IPL-2009</td><td> 5.553571</td></tr>\n",
+              "\t<tr><td>IPL-2015</td><td> 7.777778</td></tr>\n",
+              "\t<tr><td>IPL-2012</td><td> 8.194444</td></tr>\n",
+              "\t<tr><td>IPL-2011</td><td> 9.054545</td></tr>\n",
+              "\t<tr><td>IPL-2017</td><td> 9.125000</td></tr>\n",
+              "\t<tr><td>IPL-2019</td><td>10.000000</td></tr>\n",
+              "\t<tr><td>IPL-2014</td><td>11.142857</td></tr>\n",
+              "\t<tr><td>IPL-2008</td><td>11.928571</td></tr>\n",
+              "\t<tr><td>IPL-2013</td><td>12.277778</td></tr>\n",
+              "</tbody>\n",
+              "</table>\n"
+            ],
+            "text/markdown": "\nA tibble: 12 × 2\n\n| Season &lt;chr&gt; | win_variance &lt;dbl&gt; |\n|---|---|\n| IPL-2010 |  4.285714 |\n| IPL-2018 |  4.857143 |\n| IPL-2016 |  5.142857 |\n| IPL-2009 |  5.553571 |\n| IPL-2015 |  7.777778 |\n| IPL-2012 |  8.194444 |\n| IPL-2011 |  9.054545 |\n| IPL-2017 |  9.125000 |\n| IPL-2019 | 10.000000 |\n| IPL-2014 | 11.142857 |\n| IPL-2008 | 11.928571 |\n| IPL-2013 | 12.277778 |\n\n",
+            "text/latex": "A tibble: 12 × 2\n\\begin{tabular}{ll}\n Season & win\\_variance\\\\\n <chr> & <dbl>\\\\\n\\hline\n\t IPL-2010 &  4.285714\\\\\n\t IPL-2018 &  4.857143\\\\\n\t IPL-2016 &  5.142857\\\\\n\t IPL-2009 &  5.553571\\\\\n\t IPL-2015 &  7.777778\\\\\n\t IPL-2012 &  8.194444\\\\\n\t IPL-2011 &  9.054545\\\\\n\t IPL-2017 &  9.125000\\\\\n\t IPL-2019 & 10.000000\\\\\n\t IPL-2014 & 11.142857\\\\\n\t IPL-2008 & 11.928571\\\\\n\t IPL-2013 & 12.277778\\\\\n\\end{tabular}\n",
+            "text/plain": [
+              "   Season   win_variance\n",
+              "1  IPL-2010  4.285714   \n",
+              "2  IPL-2018  4.857143   \n",
+              "3  IPL-2016  5.142857   \n",
+              "4  IPL-2009  5.553571   \n",
+              "5  IPL-2015  7.777778   \n",
+              "6  IPL-2012  8.194444   \n",
+              "7  IPL-2011  9.054545   \n",
+              "8  IPL-2017  9.125000   \n",
+              "9  IPL-2019 10.000000   \n",
+              "10 IPL-2014 11.142857   \n",
+              "11 IPL-2008 11.928571   \n",
+              "12 IPL-2013 12.277778   "
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "library(ggplot2)\n",
+        "\n",
+        "ggplot(team_consistency, aes(x = reorder(team, consistency_score), y = consistency_score)) +\n",
+        "  geom_col() +\n",
+        "    coord_flip() +\n",
+        "      theme_minimal() +\n",
+        "        labs(\n",
+        "            title = \"Team Consistency Score\",\n",
+        "                x = \"Team\",\n",
+        "                    y = \"Consistency Score\"\n",
+        "                      )"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 437
+        },
+        "id": "PRtLdWoC9gI3",
+        "outputId": "7080e628-bc4b-4661-ca4c-ae017cd9e813"
+      },
+      "execution_count": 38,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "plot without title"
+            ],
+            "image/png": "iVBORw0KGgoAAAANSUhEUgAAA0gAAANICAMAAADKOT/pAAADAFBMVEUAAAABAQECAgIDAwME\nBAQFBQUGBgYHBwcICAgJCQkKCgoLCwsMDAwNDQ0ODg4PDw8QEBARERESEhITExMUFBQVFRUW\nFhYXFxcYGBgZGRkaGhobGxscHBwdHR0eHh4fHx8gICAhISEiIiIjIyMkJCQlJSUmJiYnJyco\nKCgpKSkqKiorKyssLCwtLS0uLi4vLy8wMDAxMTEyMjIzMzM0NDQ1NTU2NjY3Nzc4ODg5OTk6\nOjo7Ozs8PDw9PT0+Pj4/Pz9AQEBBQUFCQkJDQ0NERERFRUVGRkZHR0dISEhJSUlKSkpLS0tM\nTExNTU1OTk5PT09QUFBRUVFSUlJTU1NUVFRVVVVWVlZXV1dYWFhZWVlaWlpbW1tcXFxdXV1e\nXl5fX19gYGBhYWFiYmJjY2NkZGRlZWVmZmZnZ2doaGhpaWlqampra2tsbGxtbW1ubm5vb29w\ncHBxcXFycnJzc3N0dHR1dXV2dnZ3d3d4eHh5eXl6enp7e3t8fHx9fX1+fn5/f3+AgICBgYGC\ngoKDg4OEhISFhYWGhoaHh4eIiIiJiYmKioqLi4uMjIyNjY2Ojo6Pj4+QkJCRkZGSkpKTk5OU\nlJSVlZWWlpaXl5eYmJiZmZmampqbm5ucnJydnZ2enp6fn5+goKChoaGioqKjo6OkpKSlpaWm\npqanp6eoqKipqamqqqqrq6usrKytra2urq6vr6+wsLCxsbGysrKzs7O0tLS1tbW2tra3t7e4\nuLi5ubm6urq7u7u8vLy9vb2+vr6/v7/AwMDBwcHCwsLDw8PExMTFxcXGxsbHx8fIyMjJycnK\nysrLy8vMzMzNzc3Ozs7Pz8/Q0NDR0dHS0tLT09PU1NTV1dXW1tbX19fY2NjZ2dna2trb29vc\n3Nzd3d3e3t7f39/g4ODh4eHi4uLj4+Pk5OTl5eXm5ubn5+fo6Ojp6enq6urr6+vs7Ozt7e3u\n7u7v7+/w8PDx8fHy8vLz8/P09PT19fX29vb39/f4+Pj5+fn6+vr7+/v8/Pz9/f3+/v7////i\nsF19AAAACXBIWXMAABJ0AAASdAHeZh94AAAgAElEQVR4nO2dC3wU53mvJ74mviRt46S5Nidt\nT+qTpknT5qRO3KRt3KbpaT+txEpIAkmOkLnJUFhjGVUYgS8Bm5SCibkEG2wwlU3lNAkxxObm\nSCYCBwuDTLlEAoQMEtKiRWiRxMLuvGdmdmd2VtJqNLPf7s7s/p8fv92Z2fd752Pe99HOjKSV\nQACAhBHSPQEAMgGIBAAHIBIAHIBIAHAAIgHAAYgEAAcgEgAcgEjpZ76wNt1TAIkCkUZhkRDl\nI+aHdy++565bPv2NH/aMM/6pz22J3bD55+Z3GuG9mX/++zfd8aczjlnOACwBkUbhZZfE14WP\nyU+TTI/edJtw89f+4Yu3CL/7hsX9f6LC4kDacrPwle9X5n9KuHWH1RTAEhApHj8V7rM07mXh\nhgWXpefufxVuPGQpwynBqkh9t9/4qvwcekz4g+sWcwBLQKR4qCKJz91zxwfvfvSKvHy5+u4P\n3vLHD8uePCr8vOlv7rjr/n5xxZ986P8sEdVh/b+jXfHMF6ZJj9dWfu2OW//owfPhMUdzP3br\nV+rkV+v/7ndv/uT3dpB6jaStu+UzyntjdhwzMLT6a7ff8Z0GonuF15T9vClHR5buiSzd/1Cn\nPjRmGjXCz1d/6iOx/zOQIBApHqpIJcIn59XcI/x5v9SM3xL+8uE5fyL83yDR48K//U7hg58R\nSud/dkbZLcJmddga4Wvq4tBZ6SH0T8Ldcxb+k/DJdnnM4o981/PPgrCHaL3wsekLp/zeBzZH\nRIquv/Z94Z4V/xWzY/1Ayhe+WDn5DmmPzwtuZT8zhXWRPR4SvhDS/x+00JhpLBYeuq14aswO\nQKJApHhERNoq/KXUaOIsoZroJ8I9kkKBu4VtREuFW98kOnvjzXf3ktTS/6IOcwvLY9KsF75x\nleT3lInymFtekpYfFu4n+jOhTVp8/857IiLp1uuVUzv9jvUDXxb+SZrEidtu9/ffdstFaWvw\n47deiuzs+t3Cd3Wnk9HQmGksET7yxrAdgESBSPGIiPT3wk756dLNnyQ6898H5eX5wpNyb/+j\nvPznwmrp8YLwf9RhXw3Ha9wrKJf9l2+5ZVAao5yDvS18g+izH+iSlwMUEUm3HhZJv2P9wO8K\nb8nLK+adolJhlbS0S8jX9nb8i4LwucmrW8JrutDYadwz/H8GEgUixSMi0h1C+Briq8JZ5bm/\nq+sxYYHc2/Pl1W8rvToo/C912B8L+/VZxA8KfcrCnwkHpTHz5MXfCn9OVCncvaErHKOIpFsP\ni6TfsX7g7cKgmnyv8BfS41RBd7c8uHXiJ6RLrM8+Kb//REOHTcMz2v8MJAJEikdYpMHod5Sa\npG33flBZVET6oRz1N8Jx6XFI+Jw67C+EmBvP/cIt4YXvCL9Ux7QKX5Gut6bfLAhffOQ0RUTS\nrSsixexYN/CK8EEtufh5oYWuf/Sua7EzP7V54u3C1wP60GHTWDLifwYSBCLFIyzSkPCBRRFO\n04+FO+fWbf/l9LFEKhYe12fxCzeHF/5WeD1GJKLOda47hVu2aj/ZoK0rIsXsWDdwULhRu0NI\ni4SH6JfC7JGTv/AlKacudJRpxOwAJApEikfk1O4jQvQHFD4tKHeSa8cSaYPwR+p3cMTHpddu\nE8J3Av5UaB4mkjxu7U2/c1X3I0Lh9fCpnX7H+oF3Cl5t+5kPfFosFQ5GJ31RNWeNMCUmdJRp\n6HcAEgUixSMi0ncF5Vuc1Et0VbhDXhK/PpZIgx8XHoksPil8U76IUr7Z03vTh67G+NDeqcR8\nWzgWFkm3HhZJt+OYgX8nvCwvL7nv1ySv7LhDu89B9E3tvHKxUBkTOso09DsAiQKR4qHd/v6S\n/IW78aZ8ot8TOiSPFn9CeDC+SPSLDwjl8l2Drkrhw8eINgnflO/EzRMeiPHhsPAdeXP/Z268\nqIikX/+FkDtsx3qRXhT+8or0XvS7t/lIzv555YInwpPCx5Q7ceKrtwlvxoSOMg39DkCiQKR4\nqN+QLRY+/dAi9813vk30kPC/n3zynj95Q/joU+/HFYle/bBww1f+4Uu3CJ+V70KLLuFLVTX3\nCV+4GOvDJOEPH6yt/JwwJ3KNpFtv+8DNU2bE7Fg/MPQvwudmlN4pPCdvGbhTuKEjuuvgZEH4\nfN7k//dZ4YYfUEzoKNPQ7wAkCkSKhypS6Llv3HnTZ8oUXxb80a2frbxI37/9Ey3xRaKLj99z\n102/++3nh5S16yv/4rZb7/43+RIlxofV37zrxo98a6MYEUm3Tk/ddetfxOw45uLq+vIvf+j2\nb+8N76tC+E7MrN+Y/McfuuHDX34w/J0kXejIaeh3ABIFIjmbJcJL6Z4CkIFIjubaZ++6mu45\nABmI5Gjmxn7XCqQNiORcjs//a+Erg8ZxIAVAJOey54Y7ivE9VZsAkQDgAEQCgAMQCQAOQCQA\nOACRAOAARAKAAxAJAA5AJAA4AJEA4ABEMsGVPs4JBzl/rvC1Ps4/whri/TGs/bw/jXIgyDdf\noO+acdAoQCQT9HmNY0zhD/DNF/By/tG7IO8vHT7ev9h+mfPXokGvta9FEMkEEClhIBKASByA\nSAAicQAiAYjEAYgEIBIHIBKASByASEASqRhkJ8a9AZFMAJGyFePegEgmgEjZinFvQCQTQKRs\nxbg3IJIJIFK2YtwbEMkEEClbMe4NiGQCiJStGPcGRDIBRMpWjHsDIpkAImUrxr0BkUwAkbIV\n496ASCaASNmKcW9AJBNApGzFuDcgkgkgUrZi3BsQyQQQKVsx7g2IZAKIlK0Y9wZEMgFEylaM\neyPdIgXZ4RFLqdyrKSBStmLcG+kRycMkJi86SSS2+CPboksjY3OnbzH4XdJQ/eyCvBn14vj2\nP9q+jrQaDoNI2YpxS6VJpJVer/e3TxdcGGdsZ8Ok9WNHPX//QZ/vV4VbrM/psR2GIRApWzFu\nnzSJtE5+DBa8ppxk7Z7pLl0TkJZE1lBbOWUP0enZ7rkt7Iwutr6EhlgLUSfr1KJ8y8ryq9vC\nGWdtkh8PNWtRAfZ6dcWUA1pUiL1RsVJNLO+1fWFxYW0nqdlqcibMNZo2RMpWjFs6nSKJhT+T\nRerKORzqmlMvN7fL00c784fE8uUDZzysXRe7rVhTRI2iecv6Ay+VhM/5lk+LnJmpUUE25xLt\nyu3TolyetkE1sbyvGSuGBpZWkZatAu9IIB7GLZ1GkQY35l2QRWpjp6RrHOW9ybWNqJudPc6k\nc75dOpHEM1NX6kQKR7Uxn/RKUaMS1b/M9cDy1/v0Iv1cylq4U4tybSVSE8v78l8lasoV1Ww6\nkULeeKS7niBNxGsIn9bSaRIpt6CggM0+pNw/E1fnVtWdD4vUJJ2KsdZGlyid3qkiSbF5ef8x\noBMpEsUU6iM5+5s2Vk7YqxPpbWnjzDotyiUZpyaW93WkprS0iAXVbDqRxEtxuJjueoI0Ea8j\nLmstnSaRlnd2thVvp8iN6O7ti3MbFZH2K03dMEF6pV0VSYrtDlHkveacLFI46gAbcSfvuYKg\nGhVkkiA07WUtSh6lJpb21TmhPkAHZJH2DxcpLji1y1aMWzqNp3ZvujsUkZQPIVxXrROphfUS\n7Ym5RpII5jQTNUdF6mAnpK1dyms9T/XIT/tyhtSoIHuVKODerUXJo9TE0r4aXUGiTRAJjAfj\nlk7nzYYls6/JIu0qbxV9Nat0Il2fvDbQUTVcJJq2ka4+HhWJFlT1BHfkKx/dGZo9++3unren\nLtKiguzB9kBd3mUtSh6lJpb2dYIdvdZQzXq0bJUbDP+oFkTKVoxbOp0i9ZWsV66R6srzyp65\nohOJ3ptVMP8w69DFyrw7feoj77D3tSjf04UTq46GX+vfMD0/b8aLg1pUkO14xF1xkLQoeZSa\nWN7XC8WTVvk9Rd1qtm3ucqNpQ6Rsxbil0/0jQqMTvC7fYRtIKAVr5p4YImUrxr1hS5HEaSuv\n+BZVJ5RjVJESTAyRshXj3rClSHRmQcHkJYn96YfR35ESSwyRshXj3rCnSDYFImUrxr0BkUwA\nkbIV496ASCaASNmKcW9AJBNApGzFuDcgkgkgUrZi3BsQyQQQKVsx7g2IZAKIlK0Y9wZEMgFE\nylaMewMimQAiZSvGvQGRTACRshXj3oBIJoBI2Ypxb0AkE0CkbMW4NyCSCSBStmLcGxDJBBAp\nWzHuDYhkgr7EfrNjJH6DD2I2S8A7yDeh8nkaPPH1ck54+TrffIPeq5bGQSQTQKSEgUgAInEA\nIgGIxAGIBCASByASwF277MW4NyCSCSBStmLcGxDJBBApWzHuDYhkAoiUrRj3BkQyAUTKVox7\nAyKZACJlK8a9AZFMAJGyFePegEgmgEjZinFvQCQTQKRsxbg3IJIJIFK2YtwbEMkEEClbMe4N\niGQCiJStGPcGRDIBRMpWjHsDIpkAImUrxr0BkUwAkbIV496ASCaASNmKcW9kiEjyX4x17Y8s\nHjYMPhy7Otpfmx0NiJStGPeGI0XyMJYz6dG9YnSLTiSxxR/e5l1TkVf6xNGRw+WII60xY8cH\nRMpWjHvDmSKt9HYf3Vr4VNQknUgq709+sKmjZbnr16OmeGxHzNjxAZGyFePecKZI6+THVteb\nRL5lZfnVbWGRdtZOKN2rnbjVVCofiLCpjqh9YXFhbScF2OvVFVMOyBE1ORPmqpvlsbtnukvX\nGH6AAkTKVox70sEi0ROLieYt6w+8VBJQRJp9bHBz/lBEpD62W4ufsWJoYGmVZMycS7Qrt0+O\nqNih29zclXM41DWn3mi/EClbMe5JJ4v00nRqYz7pmqeoURHpVaIu1h4R6SSLXgX5rxI15YpB\n9nOiUOFOVSRtc3MbOyW9ooaL/XHoTXc9QZqI1xF+rcecLNKLM6mRKdQrIjVJZ3qsVRPphBZ/\npKa0tIgFg+xtaWVmnSqStrlZXJ1bVXdeDQ9545HueoI0Ea8hfFqPOVmk6iV0gIUvbNSbDVGR\n/Dnh2wkhkTon1AekSMkYSTWa9nJEpOjmZqLu7YtzG9X8wThcSnc9QZqI1xHaWYyTRdrP9lOH\n8r7TNYpItGjKgPy0eQE1uoJEm2RjpJO/gHt3RKTo5mblcxDXVRvtF9dI2YpxTzpTpJVe7/HN\nuc9IiwuqeoI78ntHEel8yQMNHe+tcB+iE+zotYZq1hNkD7YH6vIuyxGVG65ENzfvKm8VfTWr\njPYLkbIV4550pkjSZVH+w8pdOd/ThROrjo72jkTeZ8vzyp46JS29UDxpld9T1Ml2POKuOKjc\nIN/mLo9ubhbrpNBnrhjtFyJlK8Y96UiRLDL+77zGASJlK8a9AZFMAJGyFePegEgmgEjZinFv\nZJNICQORshXj3oBIJoBI2Ypxb0AkE0CkbMW4NyCSCSBStmLcGxDJBBApWzHuDYhkAoiUrRj3\nBkQyAUTKVox7AyKZACJlK8a9AZFMAJGyFePegEgmgEjZinFvQCQTQKRsxbg3IJIJIFK2Ytwb\nEMkEEClbMe4NiGQCiJStGPcGRDJBn5dzQr/hZ1KaI+Ad5JtQ+TALnvh6OSe8fJ1vvkHvVUvj\nIJIJIFLCQCQAkTgAkQBE4gBEAhCJAxAJ4K5ddmGuNyCSCSBSNmGuNyCSCSBSNmGuNyCSCSBS\nNmGuNyCSCSBSNmGuNyCSCSBSNmGuNyCSCSBSNmGuNyCSCSBSNmGuNyCSCSBSNmGuNyCSCSBS\nNmGuNyCSCSBSNmGuNyCSCSBSNmGuNyCSCSBSNmGuNyCSCSBSNmGuNyCSCSBSNmGuNyCSCSBS\nNmGuNyCSCSBSNmGuN+wmkmv/uMKC7LDlXVgfC5GyCXO9YQ+RvGsq8kqfOErjFkls8SvPofrZ\nBXkz6sVxDPGskx7Ol23QxpoHImUT5nrDFiK9P/nBpo6W5a5fj1sklefvP+jz/apwyzhCZZEu\nlD9nbYZhIFI2Ya43bCFSTaXyISCb6iSRdtZOKN1L5FtWll/dRiJrqK2cskd7pvaFxYW1ndrp\n2axN8uOhZhpiLUSdrDPAXq+umHJASxBib1SsVEIlkbwVPybl1E5Ld3q2e24LO0O7Z7pL1xh+\nEglEyibM9bAdROpju7Vl1+xjg5vzh2jesv7ASyUBcnn6aKe0rj7PWDE0sLRKE2n5tNbwOFWk\nIJtziXbl9ukStIU/Wcezzjd9rbwgj42kE8uXD5zxsPaunMOhrjn1kTmIV+PgS3dtQQqJ1wV6\nol977SDSSdaqLbteJepi7W3MJzV0USO5thF1s7Pas/8qUVOuqIrUv8z1wPLX+/Qi/Vy6circ\n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"
+          },
+          "metadata": {
+            "image/png": {
+              "width": 420,
+              "height": 420
+            }
+          }
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "aDdKtGlh-PEC"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "toss_decision_effect <- data %>%\n",
+        "  filter(!is.na(winner)) %>%\n",
+        "    mutate(toss_match_win = toss_winner == winner) %>%\n",
+        "      group_by(toss_match_win) %>%\n",
+        "        summarise(\n",
+        "            matches = n(),\n",
+        "                percentage = round((n() / sum(n())) * 100, 2)\n",
+        "                  )\n",
+        "\n",
+        "                  toss_decision_effect"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 160
+        },
+        "id": "goq_ccwL9sNh",
+        "outputId": "a338f073-3554-4517-b66e-dcfdee8ac6bc"
+      },
+      "execution_count": 39,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/html": [
+              "<table class=\"dataframe\">\n",
+              "<caption>A tibble: 2 × 3</caption>\n",
+              "<thead>\n",
+              "\t<tr><th scope=col>toss_match_win</th><th scope=col>matches</th><th scope=col>percentage</th></tr>\n",
+              "\t<tr><th scope=col>&lt;lgl&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+              "</thead>\n",
+              "<tbody>\n",
+              "\t<tr><td>FALSE</td><td>363</td><td>100</td></tr>\n",
+              "\t<tr><td> TRUE</td><td>393</td><td>100</td></tr>\n",
+              "</tbody>\n",
+              "</table>\n"
+            ],
+            "text/markdown": "\nA tibble: 2 × 3\n\n| toss_match_win &lt;lgl&gt; | matches &lt;int&gt; | percentage &lt;dbl&gt; |\n|---|---|---|\n| FALSE | 363 | 100 |\n|  TRUE | 393 | 100 |\n\n",
+            "text/latex": "A tibble: 2 × 3\n\\begin{tabular}{lll}\n toss\\_match\\_win & matches & percentage\\\\\n <lgl> & <int> & <dbl>\\\\\n\\hline\n\t FALSE & 363 & 100\\\\\n\t  TRUE & 393 & 100\\\\\n\\end{tabular}\n",
+            "text/plain": [
+              "  toss_match_win matches percentage\n",
+              "1 FALSE          363     100       \n",
+              "2  TRUE          393     100       "
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "strategy_success <- data %>%\n",
+        "  mutate(\n",
+        "      win_strategy = case_when(\n",
+        "            win_by_runs > 0 ~ \"Batting First\",\n",
+        "                  win_by_wickets > 0 ~ \"Chasing\",\n",
+        "                        TRUE ~ NA_character_\n",
+        "                            )\n",
+        "                              ) %>%\n",
+        "                                group_by(win_strategy) %>%\n",
+        "                                  summarise(\n",
+        "                                      matches = n(),\n",
+        "                                          win_rate = round((n() / sum(n())) * 100, 2)\n",
+        "                                            )\n",
+        "\n",
+        "                                            strategy_success"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 192
+        },
+        "id": "BXxhRpN3-jqM",
+        "outputId": "68365a1e-d9a9-48c0-ae0b-f9df430dded2"
+      },
+      "execution_count": 41,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/html": [
+              "<table class=\"dataframe\">\n",
+              "<caption>A tibble: 3 × 3</caption>\n",
+              "<thead>\n",
+              "\t<tr><th scope=col>win_strategy</th><th scope=col>matches</th><th scope=col>win_rate</th></tr>\n",
+              "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+              "</thead>\n",
+              "<tbody>\n",
+              "\t<tr><td>Batting First</td><td>337</td><td>100</td></tr>\n",
+              "\t<tr><td>Chasing      </td><td>406</td><td>100</td></tr>\n",
+              "\t<tr><td>NA           </td><td> 13</td><td>100</td></tr>\n",
+              "</tbody>\n",
+              "</table>\n"
+            ],
+            "text/markdown": "\nA tibble: 3 × 3\n\n| win_strategy &lt;chr&gt; | matches &lt;int&gt; | win_rate &lt;dbl&gt; |\n|---|---|---|\n| Batting First | 337 | 100 |\n| Chasing       | 406 | 100 |\n| NA            |  13 | 100 |\n\n",
+            "text/latex": "A tibble: 3 × 3\n\\begin{tabular}{lll}\n win\\_strategy & matches & win\\_rate\\\\\n <chr> & <int> & <dbl>\\\\\n\\hline\n\t Batting First & 337 & 100\\\\\n\t Chasing       & 406 & 100\\\\\n\t NA            &  13 & 100\\\\\n\\end{tabular}\n",
+            "text/plain": [
+              "  win_strategy  matches win_rate\n",
+              "1 Batting First 337     100     \n",
+              "2 Chasing       406     100     \n",
+              "3 NA             13     100     "
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "venue_strategy <- data %>%\n",
+        "  group_by(venue) %>%\n",
+        "    summarise(\n",
+        "        matches = n(),\n",
+        "            avg_runs = round(mean(win_by_runs, na.rm = TRUE), 1),\n",
+        "                avg_wickets = round(mean(win_by_wickets, na.rm = TRUE), 1)\n",
+        "                  ) %>%\n",
+        "                    arrange(desc(matches))\n",
+        "\n",
+        "                    head(venue_strategy)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 286
+        },
+        "id": "n9-nIqT7-la6",
+        "outputId": "f8f7cdb8-c286-4742-f7f2-b8c0f230d68f"
+      },
+      "execution_count": 42,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/html": [
+              "<table class=\"dataframe\">\n",
+              "<caption>A tibble: 6 × 4</caption>\n",
+              "<thead>\n",
+              "\t<tr><th scope=col>venue</th><th scope=col>matches</th><th scope=col>avg_runs</th><th scope=col>avg_wickets</th></tr>\n",
+              "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>\n",
+              "</thead>\n",
+              "<tbody>\n",
+              "\t<tr><td>Eden Gardens                             </td><td>77</td><td>11.3</td><td>3.6</td></tr>\n",
+              "\t<tr><td>M Chinnaswamy Stadium                    </td><td>73</td><td>17.9</td><td>3.5</td></tr>\n",
+              "\t<tr><td>Wankhede Stadium                         </td><td>73</td><td>12.8</td><td>3.0</td></tr>\n",
+              "\t<tr><td>Feroz Shah Kotla                         </td><td>67</td><td>14.7</td><td>3.1</td></tr>\n",
+              "\t<tr><td>Rajiv Gandhi International Stadium, Uppal</td><td>56</td><td> 9.1</td><td>3.7</td></tr>\n",
+              "\t<tr><td>MA Chidambaram Stadium, Chepauk          </td><td>49</td><td>14.6</td><td>2.4</td></tr>\n",
+              "</tbody>\n",
+              "</table>\n"
+            ],
+            "text/markdown": "\nA tibble: 6 × 4\n\n| venue &lt;chr&gt; | matches &lt;int&gt; | avg_runs &lt;dbl&gt; | avg_wickets &lt;dbl&gt; |\n|---|---|---|---|\n| Eden Gardens                              | 77 | 11.3 | 3.6 |\n| M Chinnaswamy Stadium                     | 73 | 17.9 | 3.5 |\n| Wankhede Stadium                          | 73 | 12.8 | 3.0 |\n| Feroz Shah Kotla                          | 67 | 14.7 | 3.1 |\n| Rajiv Gandhi International Stadium, Uppal | 56 |  9.1 | 3.7 |\n| MA Chidambaram Stadium, Chepauk           | 49 | 14.6 | 2.4 |\n\n",
+            "text/latex": "A tibble: 6 × 4\n\\begin{tabular}{llll}\n venue & matches & avg\\_runs & avg\\_wickets\\\\\n <chr> & <int> & <dbl> & <dbl>\\\\\n\\hline\n\t Eden Gardens                              & 77 & 11.3 & 3.6\\\\\n\t M Chinnaswamy Stadium                     & 73 & 17.9 & 3.5\\\\\n\t Wankhede Stadium                          & 73 & 12.8 & 3.0\\\\\n\t Feroz Shah Kotla                          & 67 & 14.7 & 3.1\\\\\n\t Rajiv Gandhi International Stadium, Uppal & 56 &  9.1 & 3.7\\\\\n\t MA Chidambaram Stadium, Chepauk           & 49 & 14.6 & 2.4\\\\\n\\end{tabular}\n",
+            "text/plain": [
+              "  venue                                     matches avg_runs avg_wickets\n",
+              "1 Eden Gardens                              77      11.3     3.6        \n",
+              "2 M Chinnaswamy Stadium                     73      17.9     3.5        \n",
+              "3 Wankhede Stadium                          73      12.8     3.0        \n",
+              "4 Feroz Shah Kotla                          67      14.7     3.1        \n",
+              "5 Rajiv Gandhi International Stadium, Uppal 56       9.1     3.7        \n",
+              "6 MA Chidambaram Stadium, Chepauk           49      14.6     2.4        "
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "team_strategy_profile <- team_consistency %>%\n",
+        "  mutate(\n",
+        "      strategy_type = case_when(\n",
+        "            consistency_score >= 0.55 ~ \"High Consistency Team\",\n",
+        "                  consistency_score >= 0.45 ~ \"Moderate Consistency Team\",\n",
+        "                        TRUE ~ \"High Variability Team\"\n",
+        "                            )\n",
+        "                              )\n",
+        "\n",
+        "                              team_strategy_profile"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 568
+        },
+        "id": "x6fvud7v-tcF",
+        "outputId": "4169f0b2-3716-40e1-ad1a-9a56630211c0"
+      },
+      "execution_count": 43,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/html": [
+              "<table class=\"dataframe\">\n",
+              "<caption>A tibble: 15 × 5</caption>\n",
+              "<thead>\n",
+              "\t<tr><th scope=col>team</th><th scope=col>matches_played</th><th scope=col>wins</th><th scope=col>consistency_score</th><th scope=col>strategy_type</th></tr>\n",
+              "\t<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;chr&gt;</th></tr>\n",
+              "</thead>\n",
+              "<tbody>\n",
+              "\t<tr><td>Delhi Capitals             </td><td> 16</td><td> 10</td><td>0.625</td><td>High Consistency Team    </td></tr>\n",
+              "\t<tr><td>Rising Pune Supergiant     </td><td> 16</td><td> 10</td><td>0.625</td><td>High Consistency Team    </td></tr>\n",
+              "\t<tr><td>Chennai Super Kings        </td><td>164</td><td>100</td><td>0.610</td><td>High Consistency Team    </td></tr>\n",
+              "\t<tr><td>Mumbai Indians             </td><td>187</td><td>109</td><td>0.583</td><td>High Consistency Team    </td></tr>\n",
+              "\t<tr><td>Sunrisers Hyderabad        </td><td>108</td><td> 58</td><td>0.537</td><td>Moderate Consistency Team</td></tr>\n",
+              "\t<tr><td>Kolkata Knight Riders      </td><td>178</td><td> 92</td><td>0.517</td><td>Moderate Consistency Team</td></tr>\n",
+              "\t<tr><td>Rajasthan Royals           </td><td>147</td><td> 75</td><td>0.510</td><td>Moderate Consistency Team</td></tr>\n",
+              "\t<tr><td>Royal Challengers Bangalore</td><td>180</td><td> 84</td><td>0.467</td><td>Moderate Consistency Team</td></tr>\n",
+              "\t<tr><td>Kings XI Punjab            </td><td>176</td><td> 82</td><td>0.466</td><td>Moderate Consistency Team</td></tr>\n",
+              "\t<tr><td>Gujarat Lions              </td><td> 30</td><td> 13</td><td>0.433</td><td>High Variability Team    </td></tr>\n",
+              "\t<tr><td>Kochi Tuskers Kerala       </td><td> 14</td><td>  6</td><td>0.429</td><td>High Variability Team    </td></tr>\n",
+              "\t<tr><td>Delhi Daredevils           </td><td>161</td><td> 67</td><td>0.416</td><td>High Variability Team    </td></tr>\n",
+              "\t<tr><td>Deccan Chargers            </td><td> 75</td><td> 29</td><td>0.387</td><td>High Variability Team    </td></tr>\n",
+              "\t<tr><td>Rising Pune Supergiants    </td><td> 14</td><td>  5</td><td>0.357</td><td>High Variability Team    </td></tr>\n",
+              "\t<tr><td>Pune Warriors              </td><td> 46</td><td> 12</td><td>0.261</td><td>High Variability Team    </td></tr>\n",
+              "</tbody>\n",
+              "</table>\n"
+            ],
+            "text/markdown": "\nA tibble: 15 × 5\n\n| team &lt;chr&gt; | matches_played &lt;int&gt; | wins &lt;int&gt; | consistency_score &lt;dbl&gt; | strategy_type &lt;chr&gt; |\n|---|---|---|---|---|\n| Delhi Capitals              |  16 |  10 | 0.625 | High Consistency Team     |\n| Rising Pune Supergiant      |  16 |  10 | 0.625 | High Consistency Team     |\n| Chennai Super Kings         | 164 | 100 | 0.610 | High Consistency Team     |\n| Mumbai Indians              | 187 | 109 | 0.583 | High Consistency Team     |\n| Sunrisers Hyderabad         | 108 |  58 | 0.537 | Moderate Consistency Team |\n| Kolkata Knight Riders       | 178 |  92 | 0.517 | Moderate Consistency Team |\n| Rajasthan Royals            | 147 |  75 | 0.510 | Moderate Consistency Team |\n| Royal Challengers Bangalore | 180 |  84 | 0.467 | Moderate Consistency Team |\n| Kings XI Punjab             | 176 |  82 | 0.466 | Moderate Consistency Team |\n| Gujarat Lions               |  30 |  13 | 0.433 | High Variability Team     |\n| Kochi Tuskers Kerala        |  14 |   6 | 0.429 | High Variability Team     |\n| Delhi Daredevils            | 161 |  67 | 0.416 | High Variability Team     |\n| Deccan Chargers             |  75 |  29 | 0.387 | High Variability Team     |\n| Rising Pune Supergiants     |  14 |   5 | 0.357 | High Variability Team     |\n| Pune Warriors               |  46 |  12 | 0.261 | High Variability Team     |\n\n",
+            "text/latex": "A tibble: 15 × 5\n\\begin{tabular}{lllll}\n team & matches\\_played & wins & consistency\\_score & strategy\\_type\\\\\n <chr> & <int> & <int> & <dbl> & <chr>\\\\\n\\hline\n\t Delhi Capitals              &  16 &  10 & 0.625 & High Consistency Team    \\\\\n\t Rising Pune Supergiant      &  16 &  10 & 0.625 & High Consistency Team    \\\\\n\t Chennai Super Kings         & 164 & 100 & 0.610 & High Consistency Team    \\\\\n\t Mumbai Indians              & 187 & 109 & 0.583 & High Consistency Team    \\\\\n\t Sunrisers Hyderabad         & 108 &  58 & 0.537 & Moderate Consistency Team\\\\\n\t Kolkata Knight Riders       & 178 &  92 & 0.517 & Moderate Consistency Team\\\\\n\t Rajasthan Royals            & 147 &  75 & 0.510 & Moderate Consistency Team\\\\\n\t Royal Challengers Bangalore & 180 &  84 & 0.467 & Moderate Consistency Team\\\\\n\t Kings XI Punjab             & 176 &  82 & 0.466 & Moderate Consistency Team\\\\\n\t Gujarat Lions               &  30 &  13 & 0.433 & High Variability Team    \\\\\n\t Kochi Tuskers Kerala        &  14 &   6 & 0.429 & High Variability Team    \\\\\n\t Delhi Daredevils            & 161 &  67 & 0.416 & High Variability Team    \\\\\n\t Deccan Chargers             &  75 &  29 & 0.387 & High Variability Team    \\\\\n\t Rising Pune Supergiants     &  14 &   5 & 0.357 & High Variability Team    \\\\\n\t Pune Warriors               &  46 &  12 & 0.261 & High Variability Team    \\\\\n\\end{tabular}\n",
+            "text/plain": [
+              "   team                        matches_played wins consistency_score\n",
+              "1  Delhi Capitals               16             10  0.625            \n",
+              "2  Rising Pune Supergiant       16             10  0.625            \n",
+              "3  Chennai Super Kings         164            100  0.610            \n",
+              "4  Mumbai Indians              187            109  0.583            \n",
+              "5  Sunrisers Hyderabad         108             58  0.537            \n",
+              "6  Kolkata Knight Riders       178             92  0.517            \n",
+              "7  Rajasthan Royals            147             75  0.510            \n",
+              "8  Royal Challengers Bangalore 180             84  0.467            \n",
+              "9  Kings XI Punjab             176             82  0.466            \n",
+              "10 Gujarat Lions                30             13  0.433            \n",
+              "11 Kochi Tuskers Kerala         14              6  0.429            \n",
+              "12 Delhi Daredevils            161             67  0.416            \n",
+              "13 Deccan Chargers              75             29  0.387            \n",
+              "14 Rising Pune Supergiants      14              5  0.357            \n",
+              "15 Pune Warriors                46             12  0.261            \n",
+              "   strategy_type            \n",
+              "1  High Consistency Team    \n",
+              "2  High Consistency Team    \n",
+              "3  High Consistency Team    \n",
+              "4  High Consistency Team    \n",
+              "5  Moderate Consistency Team\n",
+              "6  Moderate Consistency Team\n",
+              "7  Moderate Consistency Team\n",
+              "8  Moderate Consistency Team\n",
+              "9  Moderate Consistency Team\n",
+              "10 High Variability Team    \n",
+              "11 High Variability Team    \n",
+              "12 High Variability Team    \n",
+              "13 High Variability Team    \n",
+              "14 High Variability Team    \n",
+              "15 High Variability Team    "
+            ]
+          },
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "library(ggplot2)\n",
+        "\n",
+        "ggplot(strategy_success, aes(x = win_strategy, y = win_rate)) +\n",
+        "  geom_col() +\n",
+        "    theme_minimal() +\n",
+        "      labs(\n",
+        "          title = \"Win Rate by Match Strategy\",\n",
+        "              x = \"Strategy Type\",\n",
+        "                  y = \"Win Percentage\"\n",
+        "                    )"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 437
+        },
+        "id": "fFwQ5PJC-xpc",
+        "outputId": "410118c7-40c3-4844-8411-d2bafa2eadf4"
+      },
+      "execution_count": 44,
+      "outputs": [
+        {
+          "output_type": "display_data",
+          "data": {
+            "text/plain": [
+              "plot without title"
+            ],
+            "image/png": "iVBORw0KGgoAAAANSUhEUgAAA0gAAANICAMAAADKOT/pAAADAFBMVEUAAAABAQECAgIDAwME\nBAQFBQUGBgYHBwcICAgJCQkKCgoLCwsMDAwNDQ0ODg4PDw8QEBARERESEhITExMUFBQVFRUW\nFhYXFxcYGBgZGRkaGhobGxscHBwdHR0eHh4fHx8gICAhISEiIiIjIyMkJCQlJSUmJiYnJyco\nKCgpKSkqKiorKyssLCwtLS0uLi4vLy8wMDAxMTEyMjIzMzM0NDQ1NTU2NjY3Nzc4ODg5OTk6\nOjo7Ozs8PDw9PT0+Pj4/Pz9AQEBBQUFCQkJDQ0NERERFRUVGRkZHR0dISEhJSUlKSkpLS0tM\nTExNTU1OTk5PT09QUFBRUVFSUlJTU1NUVFRVVVVWVlZXV1dYWFhZWVlaWlpbW1tcXFxdXV1e\nXl5fX19gYGBhYWFiYmJjY2NkZGRlZWVmZmZnZ2doaGhpaWlqampra2tsbGxtbW1ubm5vb29w\ncHBxcXFycnJzc3N0dHR1dXV2dnZ3d3d4eHh5eXl6enp7e3t8fHx9fX1+fn5/f3+AgICBgYGC\ngoKDg4OEhISFhYWGhoaHh4eIiIiJiYmKioqLi4uMjIyNjY2Ojo6Pj4+QkJCRkZGSkpKTk5OU\nlJSVlZWWlpaXl5eYmJiZmZmampqbm5ucnJydnZ2enp6fn5+goKChoaGioqKjo6OkpKSlpaWm\npqanp6eoqKipqamqqqqrq6usrKytra2urq6vr6+wsLCxsbGysrKzs7O0tLS1tbW2tra3t7e4\nuLi5ubm6urq7u7u8vLy9vb2+vr6/v7/AwMDBwcHCwsLDw8PExMTFxcXGxsbHx8fIyMjJycnK\nysrLy8vMzMzNzc3Ozs7Pz8/Q0NDR0dHS0tLT09PU1NTV1dXW1tbX19fY2NjZ2dna2trb29vc\n3Nzd3d3e3t7f39/g4ODh4eHi4uLj4+Pk5OTl5eXm5ubn5+fo6Ojp6enq6urr6+vs7Ozt7e3u\n7u7v7+/w8PDx8fHy8vLz8/P09PT19fX29vb39/f4+Pj5+fn6+vr7+/v8/Pz9/f3+/v7////i\nsF19AAAACXBIWXMAABJ0AAASdAHeZh94AAAgAElEQVR4nO3dC5xUdf3/8S83kctilqZ5yS7+\n1MrMSxFGakWZ/WoBRTRBRCBLUUMw05+YQhqWlzD9V2b1M80w0y4mGuKFJO/2TzLTzFAzFXGD\n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\n6hoh9RRCqmuE1FMIqa4RUk8hpLpGSD2FkOoaIfUUQqprhNRTCKmuEVJPIaS6Rkg9hZDqGiH1\nFEKqa4TUUwiprhFSTyGkukZIPYWQ6hoh9RRCqmuE1FMIqa4RUk8hpLpGSD2FkOoaIfUUQqpr\nhNRTCKmuEVJPIaS6Rkg9hZDqGiH1FEKqa4TUUwiprhFSTyGkukZIPWVzc7Ve6VS0NW8OfQo9\nanNztf59QvUWEhAEIQEVQEhABRASUAGEBFQAIQEVQEhABdRFSFsal6ieX1NGPdLVvXU1sRbV\nUkjTGxsbj5+xqMM9f34+80/bU2u7fUDk3s7Pjx9WY5q+N+XoCRc/7bsLqbtLUCemj3k1vjn9\nrvjXVUdPqr6vutdUSFc1Nf3z+sYOFcy+K/tPdw+48rXYhs73Cw+pUv8af/rDLz915aiHugup\nzk0fd358kw3pFxec+GjY0+lCTYV0bfTLlpH3ef/S1044/sLX/Pkjjzkr/id6v6at8YELp06O\nnvXCmWPOeqrxxcIDfOb9ntbGu6dc5e89bcyE722KHxJsxLY5f+qm+OaGeVFICy88ZsL97dcg\nt6m7S1Anpt8y7h6fC6ltyj3XzQp9QluptZA2//aEFd6fOrd5/aXneD/lrsw/8QcIo6av8guP\nbW6bdOX6F6c3vtT+gFj2+f/YsGzkktZl027NPKymrGq8t/3pUWc+s+HGY5vz1yC3qbtLUCem\nz7/nhFW5kB4f27x05PLQZ9RZTYU0euzYkeMfi55au9H7h0e3FYX0W++XN/7z2cbXvb+nq5Bu\n8f4fjUu9b/W1F9JzHd6fHXWb98uigblrkNvU3SWoE9Pn+5mX5UKa9R3vp90Y+ow6q6mQog95\nXlxwwu+8//P5EyZ8vnFLUUgPe7+y8fnFo9qi923yIY0cFXs+8/zF0TsF3x19zrxXazKkv7U/\nnRuavwa5Td1dgjoRhfTamCcyIb0+8hnv50/YEvqUOqmpkDJvYH4xwb92zK2b/KOdQnok81r0\nwDHRi7yUD+nyl2Kb8s+P/oN956zRi2svpLUjs2fc2ubzQ9uvQXZTd5egTkQh+VsnN58RXYaf\nNB5//PFjGx8MfUqd1F5IPx/jF4+KXn9u6DKkpxqjD6Hu6+pdu+j5W6J3s/2159VeSP6iyevj\nmxtntoeUvwa5Td1dgjoRh7TljOum3eVbTpy3PPLNC0KfUic1FdJVTU3LHh7/ff+3xqc3P3Be\n4xt+6o/Xxf90eC1qGf/9TS+f001I90x6vm3l+VdnHlZbXj3xCw+8/Je5Y/7UHlL+GuQ2dXcJ\n6kQckn9u9Il3+d8fvTq+4+mRrwY+pU5qKqTGxsajvzgv+i/x9SeMu3rt9M8v/+2YST76p8Nr\nkf/LGWPPXdL4cvYBnUJqmzfp6JO+sy5+SMAZ26Tp/0Wn/s2lvj2k/DVYlt3U3SWoE5mQ/HWN\nd/lzL8vec9qPQ57P1moppLJsafH+2cb1oU8jJC5BAPUWUtsXr1q38qLzQp9GSFyCEOotJP/i\nzLHj5zSFPouguAQB1F1IQAiEBFQAIQEVQEhABRASUAGEVDWavnHwW/ru/OkFuqN8yeV9uDKn\nhbIQUrVY8Y6BZ9x08yXv6n2z90929a+lyzu3suiaa675shsT/XprhU8QEkKqFt92P49vVu6+\nV6u/uqt/LV3e2aVFbm7FTgvlIaRqcY7L/s97/9rgPx29Y3aIH37YHXsc6v3NHxrQcEj0Vip7\np//9JxsGHBR/n1nrRXv0P3jhGf388Ldk/jf0I3Zq/4spsiEV7j942H0fGrDjpPj7xNsfjsoi\npGpxszv6P7kn/z7KPfGM/8QB+313vv+5O3r+/KPc/Nyd9/Y5/I6Fp7orvP+GO+7uH71t6CD/\nY3db9Jhlvb/cfqhsSIX7D935gw81/bTf0b7Dw1FZhFQtWo9z/f/7W49mftDUlPhfywj3q+jX\nOZ+I3q6s7js+d+dBe8ffjDqyobltl/3bvH/UDfJrBzdGd13j/n/7obIhFe4f7hZnDvpy4eE9\nva7uEVL1WDBuN+d2Om99PqTtCn+J2B6HZe9c7qY1R651j7/mpsfP2H+Q95P6Lvf+sP0LB8p9\njNR+//BB8V/PdYO7q/DwHh1mASFVlaU/PMwd2poLabf4ntVf239Inz5ueDakJ/Of2/7Vky7z\nP+aMiUL6g7vSv9rrssJRciG13z/8XfFv57vrCw/v8WX1jpCqTNtk90AupL3i3x/e5/zFT/1l\nt/aQJj+S0fRo9gOdY6OQ/D4H+Kv6vFY4Rv6zdvn7syH9xt1QeHjPjjKAkKrExpt+nX3iBndT\nh5Ced6dEv7ZsnwtphZuYe/m/u3Pim/fHIV3qnh56VIdj5UPK3z98QPwzd37gFhQejgojpCrR\n9l87x/8jud/yOfeU/4JryYX0jJvt4y8hDfPZO4fuEH9q74aZLS07xB8UPe7ikF7rM87d3OFY\n+ZDy9w938U97Gd1/ZeHhPbjMBkKqFosGN5zynR99/QB3pvcXutm3ZUPavOfutz949sc+1nD/\nusydv+93wA13X9DvZO9nuJPv/sE7hsch+c+6IR1/wHn7F2Rz9w/fc5/v3/MVd5Lv8HBUFiFV\njb9Ofnf/vrt8Jv7iz78O6rdv7mOkJw4duMuXVt+x047PZe70f/hUQ799Loveomw8c6dBhz02\nbnD8Qr90X+h4pPaQcvcP3++Phw/c8ZT476tofzgqi5Bq24i3xb/+1j3W5XNz9w/ftwfPyChC\nqlVzj4nervxnh89ET27+4LAuXyR/PyGlj5Bq1Y3uc7ffcmive/3Ltx/Vp6svsBbuJ6T0EVLN\nuvGgQQM/cqf3P+71zju7en7hfkJKHyEBFUBIQAUQElABhARUACEBFUBIQAUQElABhARUwP8B\nfvZlSSgKrYUAAAAASUVORK5CYII="
+          },
+          "metadata": {
+            "image/png": {
+              "width": 420,
+              "height": 420
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
